@@ -2,7 +2,6 @@
 # wiz internals
 .circleci/
 wiz-sec-public/
-dev
 Taskfile.yml
 
 
