@@ -5,9 +5,22 @@
   "types": "./dist/index.d.ts",
   "module": "./dist/index.esm.js",
   "publishConfig": {
-    "access": "public",
-    "main": "./dist/index.esm.js",
-    "types": "./dist/index.d.ts"
+    "access": "public"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./alpha": "./src/alpha/index.ts",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "alpha": [
+        "src/alpha/index.ts"
+      ],
+      "package.json": [
+        "package.json"
+      ]
+    }
   },
   "license": "Apache-2.0",
   "backstage": {
@@ -21,7 +34,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "backstage-cli package start",
-    "start": "backstage-cli package start",
+    "start": "backstage-cli package start --config ./dev/app-config.yaml",
     "build": "backstage-cli package build",
     "lint": "backstage-cli package lint",
     "test": "jest",
@@ -30,10 +43,12 @@
     "postpack": "backstage-cli package postpack"
   },
   "dependencies": {
-    "@backstage/catalog-model": "^1.7.2",
+    "@backstage/catalog-model": "^1.7.5",
+    "@backstage/core-compat-api": "^0.5.1",
     "@backstage/core-components": "^0.16.2",
     "@backstage/core-plugin-api": "^1.10.2",
-    "@backstage/plugin-catalog-react": "^1.15.0",
+    "@backstage/frontend-plugin-api": "^0.11.0",
+    "@backstage/plugin-catalog-react": "^1.20.1",
     "@mui/icons-material": "^5.16.13",
     "@mui/material": "^5.16.13",
     "@mui/styles": "^5.16.13",
@@ -47,6 +62,8 @@
     "@backstage/cli": "^0.29.4",
     "@backstage/core-app-api": "^1.15.3",
     "@backstage/dev-utils": "^1.1.5",
+    "@backstage/frontend-defaults": "^0.3.0",
+    "@backstage/plugin-catalog": "^1.31.2",
     "@backstage/test-utils": "^1.7.3",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",

@@ -92,6 +92,75 @@ metadata:
     wiz/external-asset-id: 'aws-resource-789'
 ```
 
+## New Frontend System
+
+Follow these steps to detect and configure the Wiz plugin if you'd like to use it in an application that supports the new Backstage frontend system.
+
+### Package Detection
+
+Once you install the `@wiz-sec/backstage-plugin-wiz` package using your preferred package manager, you have to choose how the package should be detected by the app. The package can be automatically discovered when the feature discovery config is set, or it can be manually enabled via code (for more granular package customization cases).
+
+<table>
+  <tr>
+    <td>Via config</td>
+    <td>Via code</td>
+  </tr>
+  <tr>
+    <td>
+      <pre lang="yaml">
+        <code>
+# app-config.yaml
+  app:
+    # Enable package discovery for all plugins
+    packages: 'all'
+  ---
+  app:
+    # Enable package discovery only for Wiz
+    packages:
+      include:
+        - '@wiz-sec/backstage-plugin-wiz'
+        </code>
+      </pre>
+    </td>
+    <td>
+      <pre lang="javascript">
+       <code>
+// packages/app/src/App.tsx
+import { createApp } from '@backstage/frontend-defaults';
+import wizPlugin from '@wiz-sec/backstage-plugin-wiz/alpha';
+//...
+const app = createApp({
+  // ...
+  features: [
+    //...
+    wizPlugin,
+  ],
+});
+
+//...
+       </code>
+      </pre>
+    </td>
+  </tr>
+</table>
+
+### Extensions Configuration
+
+Currently, the plugin installs 2 extensions: 1 api and 1 entity page content (also known as entity page tab), see below examples of how to configure the available extensions. 
+
+```yml
+# app-config.yaml
+app:
+  extensions:
+    # Example disabling the Wiz entity content
+    - 'entity-content:wiz': false
+    # Example customizing the Wiz entity content
+    - 'entity-content:wiz':
+        config:
+          path: '/security'
+          title: 'Security'
+```
+
 ## Troubleshooting
 
 Common issues and solutions:
