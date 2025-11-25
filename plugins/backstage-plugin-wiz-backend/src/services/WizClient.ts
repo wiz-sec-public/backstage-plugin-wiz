@@ -6,22 +6,22 @@ import { ISSUES_GROUPED_COUNT_QUERY } from '../queries/issuesGrouped';
 import { CLOUD_RESOURCES_QUERY } from '../queries/cloudResources';
 import { VERSION_CONTROL_RESOURCES_QUERY } from '../queries/versionControlResources';
 import {
-  CloudResourcesResponse,
+  type CloudResourcesResponse,
   ErrorHttpStatusMap,
   ErrorTypeMap,
   GraphQLErrorCode,
-  GraphQLResponse,
-  IssuesResponse,
-  IssuesCountsResponse,
-  IssuesGroupedResponse,
+  type GraphQLResponse,
+  type IssuesResponse,
+  type IssuesCountsResponse,
+  type IssuesGroupedResponse,
   PaginatedResourceResponse,
-  VersionControlResourcesResponse,
-  VulnerabilityFindingsResponse,
+  type VersionControlResourcesResponse,
+  type VulnerabilityFindingsResponse,
   WizError,
   WizErrorType,
 } from '../types';
 import { WizAuth } from './WizAuth';
-import { Config } from '@backstage/config/index';
+import type { Config } from '@backstage/config';
 
 const INTEGRATION_ID = 'e63efba8-1707-4a4a-a096-e887d27a092c' as const;
 

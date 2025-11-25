@@ -2,11 +2,11 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
-const useSeverityStyles = makeStyles(theme => ({
+const useSeverityStyles = makeStyles(() => ({
   severityContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(1),
+    gap: '0.25rem',
   },
   severityChip: {
     borderRadius: '50%',
@@ -26,7 +26,7 @@ const useSeverityStyles = makeStyles(theme => ({
   severitySection: {
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(2),
+    gap: '0.5rem',
   },
   critical: {
     backgroundColor: 'hsl(360deg 100% 96.8%)',

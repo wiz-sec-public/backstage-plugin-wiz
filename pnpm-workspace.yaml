@@ -1,3 +1,17 @@
 packages:
   - 'packages/*'
   - 'plugins/*'
+
+ignoredBuiltDependencies:
+  - core-js-pure
+
+minimumReleaseAge: 7200 # 5 days in minutes
+
+onlyBuiltDependencies:
+  - '@swc/core' # downloads platform-specific prebuilt binaries
+  - better-sqlite3 # downloads platform-specific prebuilt binaries
+  - cpu-features # faster tests, dep of ssh2 ↓
+  - esbuild # downloads platform-specific prebuilt binaries
+  - protobufjs # check compat with protobuf version
+  - ssh2 # faster tests via native crypto bindings
+  - unrs-resolver # downloads platform-specific prebuilt binaries
