@@ -17,7 +17,7 @@ This plugin provides a user interface for viewing Wiz security information withi
 
 ```bash
 # From your Backstage root directory
-yarn add --cwd packages/app @wiz-sec/backstage-plugin-wiz
+yarn --cwd packages/app add @wiz-sec/backstage-plugin-wiz
 ```
 
 ## Configuration
@@ -88,8 +88,8 @@ kind: Component
 metadata:
   name: my-service
   annotations:
-    wiz/project-id: 'proj-123'
-    wiz/external-asset-id: 'aws-resource-789'
+    wiz.io/project-id: 'proj-123'
+    wiz.io/external-asset-id: 'aws-resource-789'
 ```
 
 ## Troubleshooting
