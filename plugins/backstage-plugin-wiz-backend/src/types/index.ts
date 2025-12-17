@@ -184,8 +184,9 @@ export interface CloudResourcesData extends ResourceData<{ id: string }> {
   };
 }
 
-export interface VersionControlResourcesData
-  extends ResourceData<{ id: string }> {
+export interface VersionControlResourcesData extends ResourceData<{
+  id: string;
+}> {
   versionControlResources: {
     nodes: Array<{ id: string }>;
     pageInfo: {
