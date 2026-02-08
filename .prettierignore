@@ -3,3 +3,5 @@ dist
 .eslintcache
 pnpm-lock.yaml
 ops
+.github/workflows/**
+.circleci/**

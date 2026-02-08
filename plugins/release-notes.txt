@@ -1,1 +1,11 @@
+## Security Updates
 
+### Vulnerability Fixes
+Fixed 2 high-severity vulnerabilities with known exploits:
+
+- CVE-2026-24842 (High): Path traversal vulnerability in tar - updated to 7.5.7
+- CVE-2026-25128 (High): RangeError DoS in fast-xml-parser - updated to 5.3.4
+
+### Changes
+- Updated `tar` override to 7.5.7
+- Added `fast-xml-parser` override to 5.3.4

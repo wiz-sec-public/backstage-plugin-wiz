@@ -5,13 +5,21 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  tar-fs: ^3.1.1
-  jws: '>=4.0.1'
-  '@octokit/request-error': '>=5.1.1'
-  '@octokit/request': '>=8.4.1'
-  '@octokit/plugin-paginate-rest': '>=9.2.2'
-  prismjs: '>=1.30.0'
-  koa: '>=2.16.3 <3.0.0'
+  tar-fs: 3.1.1
+  jws: 4.0.1
+  '@octokit/request-error': 5.1.1
+  '@octokit/request': 8.4.1
+  '@octokit/plugin-paginate-rest': 14.0.0
+  prismjs: 1.30.0
+  koa: 2.16.3
+  qs: 6.14.1
+  '@remix-run/router': 1.23.2
+  tar: 7.5.7
+  fast-xml-parser: 5.3.4
+  lodash: 4.17.23
+  '@backstage/cli-common': 0.1.17
+  diff: 5.2.2
+  undici: 7.18.2
 
 importers:
 
@@ -149,8 +157,8 @@ importers:
   plugins/backstage-plugin-wiz-backend:
     dependencies:
       '@backstage/backend-defaults':
-        specifier: ^0.13.1
-        version: 0.13.1(@swc/core@1.15.3(@swc/helpers@0.5.17))
+        specifier: ^0.13.2
+        version: 0.13.2(@swc/core@1.15.3(@swc/helpers@0.5.17))
       '@backstage/backend-plugin-api':
         specifier: ^1.5.0
         version: 1.5.0(pg@8.16.3)
@@ -638,8 +646,8 @@ packages:
   '@backstage/backend-app-api@1.3.0':
     resolution: {integrity: sha512-GEwDeVtu4rWBmsAI5rbc2yfdJ1YmaxCtAr4sy8GZa8tVFt/qe3e1H3WDcXWOPZT9zXvKnBuVx09HlwOffgaH9w==}
 
-  '@backstage/backend-defaults@0.13.1':
-    resolution: {integrity: sha512-heiU1ngfBRlfN5brys5wt8KFVWIcsnFH13AXHHC66vboyfrWqYNgOsarnOpW9tjaDdgtiCMOeIh1yFdmmARJ6g==}
+  '@backstage/backend-defaults@0.13.2':
+    resolution: {integrity: sha512-UHxExWmWG+eyXw3kVUCLJvYHw0gesWbajFTurKUiIv1wac5XKkdSavebWZ+4b+V7X4SAQQaaJEowzWc5+78N2g==}
     peerDependencies:
       '@google-cloud/cloud-sql-connector': ^1.4.0
     peerDependenciesMeta:
@@ -661,8 +669,8 @@ packages:
   '@backstage/catalog-model@1.7.6':
     resolution: {integrity: sha512-EaMl9kA+hJhwLz0lTZihA+66mN4PEmE4j5GDxX4Pntjjv/utIQ2kTBfWRgBL1BOayKtfeXKoe19ZoKb7mPYQwQ==}
 
-  '@backstage/cli-common@0.1.15':
-    resolution: {integrity: sha512-z+jMq5h+J1ruZ0IC610QFfSQxLk3IGSL1pZ/xnEIbyohaak+eeOZCyNzKBLwQrBDnIFCdmMoq69/Vrejo2hPeA==}
+  '@backstage/cli-common@0.1.17':
+    resolution: {integrity: sha512-CssL1xZj0YEgrY6yKZ0zG0gX15UCE7w0Q69GZ+KLvvXqdOdG9ODo862RrLnzUFKYAWrBthaung27G1amVe69ZA==}
 
   '@backstage/cli-node@0.2.15':
     resolution: {integrity: sha512-KYWSidGanRUGAVGYFv0vcmmsn6RyL+9ZRJxzTFrLHgrou8nAE9BN4qL/yEUMGyJrIzvP0FDsxO/j/ngpHTOBNA==}
@@ -1238,10 +1246,6 @@ packages:
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@fastify/busboy@2.1.1':
-    resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
-    engines: {node: '>=14'}
-
   '@formatjs/ecma402-abstract@2.3.6':
     resolution: {integrity: sha512-HJnTFeRM2kVFVr5gr5kH1XP6K0JcJtE7Lzvtr3FS/so5f1kpsqqqxy5JF+FRaO6H2qmcMfAUIox7AJteieRtVw==}
 
@@ -1339,6 +1343,10 @@ packages:
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
+
+  '@isaacs/fs-minipass@4.0.1':
+    resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
+    engines: {node: '>=18.0.0'}
 
   '@istanbuljs/load-nyc-config@1.1.0':
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}
@@ -2641,8 +2649,8 @@ packages:
     resolution: {integrity: sha512-/KCsg3xSlR+nCK8/8ZYSknYxvXHwubJrU82F3Lm1Fp6789VQ0/3RJKfsmRXjqfaTA++23CvC3hqmqe/2GEt6Kw==}
     engines: {node: '>=14'}
 
-  '@remix-run/router@1.23.1':
-    resolution: {integrity: sha512-vDbaOzF7yT2Qs4vO6XV1MHcJv+3dgR1sT+l3B8xxOVhUC336prMvqrvsLL/9Dnw2xr6Qhz4J0dmS0llNAbnUmQ==}
+  '@remix-run/router@1.23.2':
+    resolution: {integrity: sha512-Ic6m2U/rMjTkhERIa/0ZtXJP17QUi2CbWE7cqx4J58M8aA3QTfW+2UlQ4psvTX9IO1RfNVhK3pcpdjej7L+t2w==}
     engines: {node: '>=14.0.0'}
 
   '@remixicon/react@4.7.0':
@@ -4441,9 +4449,9 @@ packages:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
     engines: {node: '>= 8.10.0'}
 
-  chownr@2.0.0:
-    resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==}
-    engines: {node: '>=10'}
+  chownr@3.0.0:
+    resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
+    engines: {node: '>=18'}
 
   chrome-trace-event@1.0.4:
     resolution: {integrity: sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ==}
@@ -5068,12 +5076,8 @@ packages:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
-  diff@4.0.2:
-    resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
-    engines: {node: '>=0.3.1'}
-
-  diff@5.2.0:
-    resolution: {integrity: sha512-uIFDxqpRZGZ6ThOk84hEfqWoHx2devRFvpTZcTHur85vImfaxUbTW9Ryh4CpCuDnToOP1CEtXKIgytHBPVff5A==}
+  diff@5.2.2:
+    resolution: {integrity: sha512-vtcDfH3TOjP8UekytvnHH1o1P4FcUdt4eQ1Y+Abap1tk/OB2MWQvcwS2ClCd1zuIhc3JKOx6p3kod8Vfys3E+A==}
     engines: {node: '>=0.3.1'}
 
   diffie-hellman@5.0.3:
@@ -5597,16 +5601,8 @@ packages:
   fast-uri@3.1.0:
     resolution: {integrity: sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==}
 
-  fast-xml-parser@4.5.3:
-    resolution: {integrity: sha512-RKihhV+SHsIUGXObeVy9AXiBbFwkVk7Syp8XgwN5U3JV416+Gwp/GO9i0JYKmikykgz/UHRrrV4ROuZEo/T0ig==}
-    hasBin: true
-
-  fast-xml-parser@5.2.5:
-    resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
-    hasBin: true
-
-  fast-xml-parser@5.3.2:
-    resolution: {integrity: sha512-n8v8b6p4Z1sMgqRmqLJm3awW4NX7NkaKPfb3uJIBTSH7Pdvufi3PQ3/lJLQrvxcMYl7JI2jnDO90siPEpD8JBA==}
+  fast-xml-parser@5.3.4:
+    resolution: {integrity: sha512-EFd6afGmXlCx8H8WTZHhAoDaWaGyuIBoZJ2mknrNxug+aZKjkp0a0dlars9Izl+jF+7Gu1/5f/2h68cQpe0IiA==}
     hasBin: true
 
   fastest-stable-stringify@2.0.2:
@@ -5785,10 +5781,6 @@ packages:
   fs-extra@9.1.0:
     resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
     engines: {node: '>=10'}
-
-  fs-minipass@2.1.0:
-    resolution: {integrity: sha512-V/JgOLFCS+R6Vcq0slCuaeWEdNC3ouDlJMNIsacH2VtALiu9mV4LPrHc5cDl8k5aw6J8jwgWWpiTo5RYhmIzvg==}
-    engines: {node: '>= 8'}
 
   fs-monkey@1.1.0:
     resolution: {integrity: sha512-QMUezzXWII9EV5aTFXW1UBVUO77wYPpjqIF8/AviUCThNeSYZykpoTixUeaNNBwmCev0AMDWMAni+f8Hxb1IFw==}
@@ -6964,7 +6956,6 @@ packages:
   keygrip@1.1.0:
     resolution: {integrity: sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==}
     engines: {node: '>= 0.6'}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -7141,8 +7132,8 @@ packages:
   lodash.uniq@4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -7476,21 +7467,13 @@ packages:
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
-  minipass@3.3.6:
-    resolution: {integrity: sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw==}
-    engines: {node: '>=8'}
-
-  minipass@5.0.0:
-    resolution: {integrity: sha512-3FnjYuehv9k6ovOEbyOswadCDPX1piCfhV8ncmYtHOjuPwylVWsghTLo7rabjC3Rx5xD4HDx8Wm1xnMF7S5qFQ==}
-    engines: {node: '>=8'}
-
   minipass@7.1.2:
     resolution: {integrity: sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==}
     engines: {node: '>=16 || 14 >=14.17'}
 
-  minizlib@2.1.2:
-    resolution: {integrity: sha512-bAxsR8BVfj60DWXHE3u30oHzfl4G7khkSuPW+qvpd7jFRHm7dLxOjUk1EHACJ/hxLY8phGJ0YhYHZo7jil7Qdg==}
-    engines: {node: '>= 8'}
+  minizlib@3.1.0:
+    resolution: {integrity: sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==}
+    engines: {node: '>= 18'}
 
   mkdirp-classic@0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
@@ -8328,12 +8311,8 @@ packages:
   pure-rand@7.0.1:
     resolution: {integrity: sha512-oTUZM/NAZS8p7ANR3SHh30kXB+zK2r2BPcEn/awJIbOvq82WoMN4p62AWWp3Hhw50G0xMsw1mhIBLqHw64EcNQ==}
 
-  qs@6.13.0:
-    resolution: {integrity: sha512-+38qI9SOr8tfZ4QmJNplMUxqjbe7LKvvZgWdExBOmd+egZTtjLB67Gu0HRX3u/XOq7UU2Nx6nsjvS16Z9uwfpg==}
-    engines: {node: '>=0.6'}
-
-  qs@6.14.0:
-    resolution: {integrity: sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==}
+  qs@6.14.1:
+    resolution: {integrity: sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==}
     engines: {node: '>=0.6'}
 
   quansync@1.0.0:
@@ -9190,9 +9169,6 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
-  strnum@1.1.2:
-    resolution: {integrity: sha512-vrN+B7DBIoTTZjnPNewwhx6cBA/H+IS7rfW68n7XxC1y7uoiGQBxaKzqucGUgavX15dJgiGztLJ8vxuEzwqBdA==}
-
   strnum@2.1.1:
     resolution: {integrity: sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==}
 
@@ -9289,9 +9265,9 @@ packages:
   tar-stream@3.1.7:
     resolution: {integrity: sha512-qJj60CXt7IU1Ffyc3NJMjh6EkuCFej46zUqJ4J7pqYlThyd9bO0XBTmcOIhSzZJVWfsLks0+nle/j538YAW9RQ==}
 
-  tar@6.2.1:
-    resolution: {integrity: sha512-DZ4yORTwrbTj/7MZYq2w+/ZFdI6OZ/f9SFHR+71gIVUZhOQPHzVCLpvRnPgyaMpfWxxk/4ONva3GQSyNIKRv6A==}
-    engines: {node: '>=10'}
+  tar@7.5.7:
+    resolution: {integrity: sha512-fov56fJiRuThVFXD6o6/Q354S7pnWMJIVlDBYijsTNx6jKSE4pvrDTs6lUnmGvNyfJwFQQwWy3owKz1ucIhveQ==}
+    engines: {node: '>=18'}
 
   tarn@3.0.2:
     resolution: {integrity: sha512-51LAVKUSZSVfI05vjPESNc5vwqqZpbXCsU+/+wxlOrUjk2SnFTt97v9ZgQrD4YmxYW1Px6w2KjaDitCfkvgxMQ==}
@@ -9643,12 +9619,8 @@ packages:
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
-  undici@5.29.0:
-    resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
-    engines: {node: '>=14.0'}
-
-  undici@7.16.0:
-    resolution: {integrity: sha512-QEg3HPMll0o3t2ourKwOeUAZ159Kn9mx5pnzHRQO8+Wixmh88YdZRiIwat0iNzNNXn0yoEtXJqFpyW7eM8BV7g==}
+  undici@7.18.2:
+    resolution: {integrity: sha512-y+8YjDFzWdQlSE9N5nzKMT3g4a5UBX1HKowfdXh0uvAnTaqqwqB92Jt4UXBAeKekDs5IaDKyJFR4X1gYVCgXcw==}
     engines: {node: '>=20.18.1'}
 
   unified@10.1.2:
@@ -10014,6 +9986,10 @@ packages:
 
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
+
+  yallist@5.0.0:
+    resolution: {integrity: sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==}
+    engines: {node: '>=18'}
 
   yaml@1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
@@ -10745,7 +10721,7 @@ snapshots:
   '@aws-sdk/xml-builder@3.930.0':
     dependencies:
       '@smithy/types': 4.9.0
-      fast-xml-parser: 5.2.5
+      fast-xml-parser: 5.3.4
       tslib: 2.8.1
 
   '@aws/lambda-invoke-store@0.2.1': {}
@@ -10821,7 +10797,7 @@ snapshots:
 
   '@azure/core-xml@1.5.0':
     dependencies:
-      fast-xml-parser: 5.3.2
+      fast-xml-parser: 5.3.4
       tslib: 2.8.1
 
   '@azure/identity@4.13.0':
@@ -11130,7 +11106,7 @@ snapshots:
       - supports-color
       - tedious
 
-  '@backstage/backend-defaults@0.13.1(@swc/core@1.15.3(@swc/helpers@0.5.17))':
+  '@backstage/backend-defaults@0.13.2(@swc/core@1.15.3(@swc/helpers@0.5.17))':
     dependencies:
       '@aws-sdk/abort-controller': 3.374.0
       '@aws-sdk/client-codecommit': 3.940.0
@@ -11179,7 +11155,7 @@ snapshots:
       jose: 5.10.0
       keyv: 5.5.4
       knex: 3.1.0(better-sqlite3@12.5.0)(mysql2@3.15.3)(pg@8.16.3)
-      lodash: 4.17.21
+      lodash: 4.17.23
       logform: 2.7.0
       luxon: 3.7.2
       minimatch: 9.0.5
@@ -11194,7 +11170,7 @@ snapshots:
       rate-limit-redis: 4.3.1(express-rate-limit@7.5.1(express@4.21.2))
       raw-body: 2.5.3
       selfsigned: 2.4.1
-      tar: 6.2.1
+      tar: 7.5.7
       triple-beam: 1.4.1
       uuid: 11.1.0
       winston: 3.18.3
@@ -11221,7 +11197,7 @@ snapshots:
 
   '@backstage/backend-plugin-api@1.5.0(better-sqlite3@12.5.0)(mysql2@3.15.3)(pg@8.16.3)':
     dependencies:
-      '@backstage/cli-common': 0.1.15
+      '@backstage/cli-common': 0.1.17
       '@backstage/config': 1.3.6
       '@backstage/errors': 1.2.7
       '@backstage/plugin-auth-node': 0.6.9(better-sqlite3@12.5.0)(mysql2@3.15.3)(pg@8.16.3)
@@ -11248,7 +11224,7 @@ snapshots:
 
   '@backstage/backend-plugin-api@1.5.0(pg@8.16.3)':
     dependencies:
-      '@backstage/cli-common': 0.1.15
+      '@backstage/cli-common': 0.1.17
       '@backstage/config': 1.3.6
       '@backstage/errors': 1.2.7
       '@backstage/plugin-auth-node': 0.6.9(better-sqlite3@12.5.0)(mysql2@3.15.3)(pg@8.16.3)
@@ -11276,7 +11252,7 @@ snapshots:
   '@backstage/backend-test-utils@1.10.0(@swc/core@1.15.3(@swc/helpers@0.5.17))':
     dependencies:
       '@backstage/backend-app-api': 1.3.0(better-sqlite3@12.5.0)(mysql2@3.15.3)(pg@8.16.3)
-      '@backstage/backend-defaults': 0.13.1(@swc/core@1.15.3(@swc/helpers@0.5.17))
+      '@backstage/backend-defaults': 0.13.2(@swc/core@1.15.3(@swc/helpers@0.5.17))
       '@backstage/backend-plugin-api': 1.5.0(better-sqlite3@12.5.0)(mysql2@3.15.3)(pg@8.16.3)
       '@backstage/config': 1.3.6
       '@backstage/errors': 1.2.7
@@ -11297,7 +11273,7 @@ snapshots:
       fs-extra: 11.3.2
       keyv: 5.5.4
       knex: 3.1.0(better-sqlite3@12.5.0)(mysql2@3.15.3)(pg@8.16.3)
-      lodash: 4.17.21
+      lodash: 4.17.23
       mysql2: 3.15.3
       pg: 8.16.3
       pg-connection-string: 2.9.1
@@ -11336,13 +11312,18 @@ snapshots:
       '@backstage/errors': 1.2.7
       '@backstage/types': 1.2.2
       ajv: 8.17.1
-      lodash: 4.17.21
+      lodash: 4.17.23
 
-  '@backstage/cli-common@0.1.15': {}
+  '@backstage/cli-common@0.1.17':
+    dependencies:
+      '@backstage/errors': 1.2.7
+      cross-spawn: 7.0.6
+      global-agent: 3.0.0
+      undici: 7.18.2
 
   '@backstage/cli-node@0.2.15':
     dependencies:
-      '@backstage/cli-common': 0.1.15
+      '@backstage/cli-common': 0.1.17
       '@backstage/errors': 1.2.7
       '@backstage/types': 1.2.2
       '@manypkg/get-packages': 1.1.3
@@ -11354,7 +11335,7 @@ snapshots:
   '@backstage/cli@0.34.5(@module-federation/enhanced@0.9.1(@rspack/core@1.6.7(@swc/helpers@0.5.17))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))(esbuild@0.25.12)))(@types/express@4.17.25)(@types/node@24.10.3)(babel-plugin-macros@3.1.0)(terser-webpack-plugin@5.3.15(@swc/core@1.15.3(@swc/helpers@0.5.17))(esbuild@0.25.12)(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))(esbuild@0.25.12)))(ts-node@10.9.2(@swc/core@1.15.3(@swc/helpers@0.5.17))(@types/node@24.10.3)(typescript@5.9.3))(typescript@5.9.3)(webpack-dev-server@5.2.2(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))(esbuild@0.25.12)))(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))(esbuild@0.25.12))':
     dependencies:
       '@backstage/catalog-model': 1.7.6
-      '@backstage/cli-common': 0.1.15
+      '@backstage/cli-common': 0.1.17
       '@backstage/cli-node': 0.2.15
       '@backstage/config': 1.3.6
       '@backstage/config-loader': 1.10.6(@swc/core@1.15.3(@swc/helpers@0.5.17))
@@ -11420,7 +11401,7 @@ snapshots:
       jest-environment-jsdom: 29.7.0
       jest-runtime: 29.7.0
       json-schema: 0.4.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       minimatch: 9.0.5
       node-stdlib-browser: 1.3.1
       npm-packlist: 5.1.3
@@ -11443,10 +11424,10 @@ snapshots:
       style-loader: 3.3.4(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))(esbuild@0.25.12))
       sucrase: 3.35.1
       swc-loader: 0.2.6(@swc/core@1.15.3(@swc/helpers@0.5.17))(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))(esbuild@0.25.12))
-      tar: 6.2.1
+      tar: 7.5.7
       ts-checker-rspack-plugin: 1.2.1(@rspack/core@1.6.7(@swc/helpers@0.5.17))(typescript@5.9.3)
       ts-morph: 24.0.0
-      undici: 7.16.0
+      undici: 7.18.2
       util: 0.12.5
       yaml: 2.8.2
       yargs: 16.2.0
@@ -11482,7 +11463,7 @@ snapshots:
   '@backstage/cli@0.34.5(@module-federation/enhanced@0.9.1(@rspack/core@1.6.7(@swc/helpers@0.5.17))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))))(@types/express@4.17.25)(@types/node@24.10.3)(babel-plugin-macros@3.1.0)(terser-webpack-plugin@5.3.15(@swc/core@1.15.3(@swc/helpers@0.5.17))(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))))(ts-node@10.9.2(@swc/core@1.15.3(@swc/helpers@0.5.17))(@types/node@24.10.3)(typescript@5.9.3))(typescript@5.9.3)(webpack-dev-server@5.2.2(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))))(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17)))':
     dependencies:
       '@backstage/catalog-model': 1.7.6
-      '@backstage/cli-common': 0.1.15
+      '@backstage/cli-common': 0.1.17
       '@backstage/cli-node': 0.2.15
       '@backstage/config': 1.3.6
       '@backstage/config-loader': 1.10.6(@swc/core@1.15.3(@swc/helpers@0.5.17))
@@ -11548,7 +11529,7 @@ snapshots:
       jest-environment-jsdom: 29.7.0
       jest-runtime: 29.7.0
       json-schema: 0.4.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       minimatch: 9.0.5
       node-stdlib-browser: 1.3.1
       npm-packlist: 5.1.3
@@ -11571,10 +11552,10 @@ snapshots:
       style-loader: 3.3.4(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17)))
       sucrase: 3.35.1
       swc-loader: 0.2.6(@swc/core@1.15.3(@swc/helpers@0.5.17))(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17)))
-      tar: 6.2.1
+      tar: 7.5.7
       ts-checker-rspack-plugin: 1.2.1(@rspack/core@1.6.7(@swc/helpers@0.5.17))(typescript@5.9.3)
       ts-morph: 24.0.0
-      undici: 7.16.0
+      undici: 7.18.2
       util: 0.12.5
       yaml: 2.8.2
       yargs: 16.2.0
@@ -11610,7 +11591,7 @@ snapshots:
   '@backstage/cli@0.34.5(@module-federation/enhanced@0.9.1(@rspack/core@1.6.7(@swc/helpers@0.5.17))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))))(@types/express@4.17.25)(@types/node@25.0.0)(babel-plugin-macros@3.1.0)(terser-webpack-plugin@5.3.15(@swc/core@1.15.3(@swc/helpers@0.5.17))(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))))(ts-node@10.9.2(@swc/core@1.15.3(@swc/helpers@0.5.17))(@types/node@25.0.0)(typescript@5.9.3))(typescript@5.9.3)(webpack-dev-server@5.2.2(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17))))(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17)))':
     dependencies:
       '@backstage/catalog-model': 1.7.6
-      '@backstage/cli-common': 0.1.15
+      '@backstage/cli-common': 0.1.17
       '@backstage/cli-node': 0.2.15
       '@backstage/config': 1.3.6
       '@backstage/config-loader': 1.10.6(@swc/core@1.15.3(@swc/helpers@0.5.17))
@@ -11676,7 +11657,7 @@ snapshots:
       jest-environment-jsdom: 29.7.0
       jest-runtime: 29.7.0
       json-schema: 0.4.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       minimatch: 9.0.5
       node-stdlib-browser: 1.3.1
       npm-packlist: 5.1.3
@@ -11699,10 +11680,10 @@ snapshots:
       style-loader: 3.3.4(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17)))
       sucrase: 3.35.1
       swc-loader: 0.2.6(@swc/core@1.15.3(@swc/helpers@0.5.17))(webpack@5.96.1(@swc/core@1.15.3(@swc/helpers@0.5.17)))
-      tar: 6.2.1
+      tar: 7.5.7
       ts-checker-rspack-plugin: 1.2.1(@rspack/core@1.6.7(@swc/helpers@0.5.17))(typescript@5.9.3)
       ts-morph: 24.0.0
-      undici: 7.16.0
+      undici: 7.18.2
       util: 0.12.5
       yaml: 2.8.2
       yargs: 16.2.0
@@ -11737,7 +11718,7 @@ snapshots:
 
   '@backstage/config-loader@1.10.6(@swc/core@1.15.3(@swc/helpers@0.5.17))':
     dependencies:
-      '@backstage/cli-common': 0.1.15
+      '@backstage/cli-common': 0.1.17
       '@backstage/config': 1.3.6
       '@backstage/errors': 1.2.7
       '@backstage/types': 1.2.2
@@ -11748,7 +11729,7 @@ snapshots:
       json-schema: 0.4.0
       json-schema-merge-allof: 0.8.1
       json-schema-traverse: 1.0.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       minimist: 1.2.8
       typescript-json-schema: 0.65.1(@swc/core@1.15.3(@swc/helpers@0.5.17))
       yaml: 2.8.2
@@ -11771,7 +11752,7 @@ snapshots:
       '@types/prop-types': 15.7.15
       history: 5.3.0
       i18next: 22.5.1
-      lodash: 4.17.21
+      lodash: 4.17.23
       prop-types: 15.8.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -11789,7 +11770,7 @@ snapshots:
       '@backstage/plugin-catalog-react': 1.21.3(@mui/material@5.18.0(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@testing-library/dom@10.4.1)(@testing-library/react@16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@18.3.7(@types/react@18.3.27))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react-dom@18.3.7(@types/react@18.3.27))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@backstage/types': 1.2.2
       '@backstage/version-bridge': 1.0.11(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-router-dom: 6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -11830,9 +11811,9 @@ snapshots:
       js-yaml: 4.1.1
       linkify-react: 4.3.2(linkifyjs@4.3.2)(react@18.3.1)
       linkifyjs: 4.3.2
-      lodash: 4.17.21
+      lodash: 4.17.23
       pluralize: 8.0.0
-      qs: 6.14.0
+      qs: 6.14.1
       rc-progress: 3.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -11922,7 +11903,7 @@ snapshots:
       '@backstage/frontend-plugin-api': 0.13.1(@testing-library/dom@10.4.1)(@types/react-dom@18.3.7(@types/react@18.3.27))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@backstage/types': 1.2.2
       '@backstage/version-bridge': 1.0.11(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-router-dom: 6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -11966,7 +11947,7 @@ snapshots:
       '@backstage/types': 1.2.2
       '@backstage/version-bridge': 1.0.11(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@material-ui/core': 4.12.4(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      lodash: 4.17.21
+      lodash: 4.17.23
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-router-dom: 6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -12043,7 +12024,7 @@ snapshots:
       '@octokit/rest': 19.0.13
       cross-fetch: 4.1.0
       git-url-parse: 15.0.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       luxon: 3.7.2
     transitivePeerDependencies:
       - encoding
@@ -12090,7 +12071,7 @@ snapshots:
       '@types/passport': 1.0.17
       express: 4.21.2
       jose: 5.10.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       passport: 0.7.0
       zod: 3.25.76
       zod-to-json-schema: 3.25.0(zod@3.25.76)
@@ -12124,7 +12105,7 @@ snapshots:
       '@backstage/plugin-permission-common': 0.9.3
       '@backstage/plugin-permission-node': 0.10.6(pg@8.16.3)
       '@backstage/types': 1.2.2
-      lodash: 4.17.21
+      lodash: 4.17.23
       yaml: 2.8.2
     transitivePeerDependencies:
       - better-sqlite3
@@ -12158,9 +12139,9 @@ snapshots:
       '@material-ui/lab': 4.0.0-alpha.61(@material-ui/core@4.12.4(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-hookz/web': 24.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       classnames: 2.5.1
-      lodash: 4.17.21
+      lodash: 4.17.23
       material-ui-popup-state: 5.3.6(@mui/material@5.18.0(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.27)(react@18.3.1)
-      qs: 6.14.0
+      qs: 6.14.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-router-dom: 6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -12619,8 +12600,6 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
-  '@fastify/busboy@2.1.1': {}
-
   '@formatjs/ecma402-abstract@2.3.6':
     dependencies:
       '@formatjs/fast-memoize': 2.2.7
@@ -12664,7 +12643,7 @@ snapshots:
       abort-controller: 3.0.0
       async-retry: 1.3.3
       duplexify: 4.1.3
-      fast-xml-parser: 4.5.3
+      fast-xml-parser: 5.3.4
       gaxios: 6.7.1
       google-auth-library: 9.15.1
       html-entities: 2.6.0
@@ -12758,6 +12737,10 @@ snapshots:
       strip-ansi-cjs: strip-ansi@6.0.1
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
+
+  '@isaacs/fs-minipass@4.0.1':
+    dependencies:
+      minipass: 7.1.2
 
   '@istanbuljs/load-nyc-config@1.1.0':
     dependencies:
@@ -14941,7 +14924,7 @@ snapshots:
       generic-pool: 3.9.0
       yallist: 4.0.0
 
-  '@remix-run/router@1.23.1': {}
+  '@remix-run/router@1.23.2': {}
 
   '@remixicon/react@4.7.0(react@18.3.1)':
     dependencies:
@@ -15735,7 +15718,7 @@ snapshots:
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 25.0.0
+      '@types/node': 24.10.3
 
   '@types/debug@4.1.12':
     dependencies:
@@ -15916,7 +15899,7 @@ snapshots:
   '@types/request@2.48.13':
     dependencies:
       '@types/caseless': 0.12.5
-      '@types/node': 25.0.0
+      '@types/node': 24.10.3
       '@types/tough-cookie': 4.0.5
       form-data: 2.5.5
 
@@ -16461,7 +16444,7 @@ snapshots:
       graceful-fs: 4.2.11
       is-stream: 2.0.1
       lazystream: 1.0.1
-      lodash: 4.17.21
+      lodash: 4.17.23
       normalize-path: 3.0.0
       readable-stream: 4.7.0
 
@@ -16820,7 +16803,7 @@ snapshots:
       http-errors: 2.0.0
       iconv-lite: 0.4.24
       on-finished: 2.4.1
-      qs: 6.13.0
+      qs: 6.14.1
       raw-body: 2.5.2
       type-is: 1.6.18
       unpipe: 1.0.0
@@ -16837,7 +16820,7 @@ snapshots:
       http-errors: 2.0.1
       iconv-lite: 0.4.24
       on-finished: 2.4.1
-      qs: 6.14.0
+      qs: 6.14.1
       raw-body: 2.5.3
       type-is: 1.6.18
       unpipe: 1.0.0
@@ -17066,7 +17049,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  chownr@2.0.0: {}
+  chownr@3.0.0: {}
 
   chrome-trace-event@1.0.4: {}
 
@@ -17725,9 +17708,7 @@ snapshots:
 
   diff-sequences@29.6.3: {}
 
-  diff@4.0.2: {}
-
-  diff@5.2.0: {}
+  diff@5.2.2: {}
 
   diffie-hellman@5.0.3:
     dependencies:
@@ -18539,7 +18520,7 @@ snapshots:
       parseurl: 1.3.3
       path-to-regexp: 0.1.12
       proxy-addr: 2.0.7
-      qs: 6.13.0
+      qs: 6.14.1
       range-parser: 1.2.1
       safe-buffer: 5.2.1
       send: 0.19.0
@@ -18575,7 +18556,7 @@ snapshots:
       parseurl: 1.3.3
       path-to-regexp: 0.1.12
       proxy-addr: 2.0.7
-      qs: 6.14.0
+      qs: 6.14.1
       range-parser: 1.2.1
       safe-buffer: 5.2.1
       send: 0.19.1
@@ -18612,15 +18593,7 @@ snapshots:
 
   fast-uri@3.1.0: {}
 
-  fast-xml-parser@4.5.3:
-    dependencies:
-      strnum: 1.1.2
-
-  fast-xml-parser@5.2.5:
-    dependencies:
-      strnum: 2.1.1
-
-  fast-xml-parser@5.3.2:
+  fast-xml-parser@5.3.4:
     dependencies:
       strnum: 2.1.1
 
@@ -18847,10 +18820,6 @@ snapshots:
       graceful-fs: 4.2.11
       jsonfile: 6.2.0
       universalify: 2.0.1
-
-  fs-minipass@2.1.0:
-    dependencies:
-      minipass: 3.3.6
 
   fs-monkey@1.1.0: {}
 
@@ -19214,7 +19183,7 @@ snapshots:
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       pretty-error: 4.0.0
       tapable: 2.3.0
     optionalDependencies:
@@ -19225,7 +19194,7 @@ snapshots:
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       pretty-error: 4.0.0
       tapable: 2.3.0
     optionalDependencies:
@@ -19433,7 +19402,7 @@ snapshots:
       cli-cursor: 3.1.0
       cli-width: 3.0.0
       figures: 3.2.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       mute-stream: 0.0.8
       ora: 5.4.1
       run-async: 2.4.1
@@ -19453,7 +19422,7 @@ snapshots:
       cli-cursor: 3.1.0
       cli-width: 3.0.0
       figures: 3.2.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       mute-stream: 0.0.8
       ora: 5.4.1
       run-async: 2.4.1
@@ -20570,13 +20539,13 @@ snapshots:
 
   json-schema-compare@0.2.2:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
 
   json-schema-merge-allof@0.8.1:
     dependencies:
       compute-lcm: 1.1.2
       json-schema-compare: 0.2.2
-      lodash: 4.17.21
+      lodash: 4.17.23
 
   json-schema-traverse@0.4.1: {}
 
@@ -20718,7 +20687,7 @@ snapshots:
       get-package-type: 0.1.0
       getopts: 2.3.0
       interpret: 2.2.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       pg-connection-string: 2.6.2
       rechoir: 0.8.0
       resolve-from: 5.0.0
@@ -20869,7 +20838,7 @@ snapshots:
 
   lodash.uniq@4.5.0: {}
 
-  lodash@4.17.21: {}
+  lodash@4.17.23: {}
 
   log-symbols@4.1.0:
     dependencies:
@@ -21351,18 +21320,11 @@ snapshots:
 
   minimist@1.2.8: {}
 
-  minipass@3.3.6:
-    dependencies:
-      yallist: 4.0.0
-
-  minipass@5.0.0: {}
-
   minipass@7.1.2: {}
 
-  minizlib@2.1.2:
+  minizlib@3.1.0:
     dependencies:
-      minipass: 3.3.6
-      yallist: 4.0.0
+      minipass: 7.1.2
 
   mkdirp-classic@0.5.3: {}
 
@@ -22143,7 +22105,7 @@ snapshots:
 
   pretty-error@4.0.0:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
       renderkid: 3.0.0
 
   pretty-format@27.5.1:
@@ -22250,11 +22212,7 @@ snapshots:
 
   pure-rand@7.0.1: {}
 
-  qs@6.13.0:
-    dependencies:
-      side-channel: 1.1.0
-
-  qs@6.14.0:
+  qs@6.14.1:
     dependencies:
       side-channel: 1.1.0
 
@@ -22579,14 +22537,14 @@ snapshots:
 
   react-router-dom@6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@remix-run/router': 1.23.1
+      '@remix-run/router': 1.23.2
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-router: 6.30.2(react@18.3.1)
 
   react-router@6.30.2(react@18.3.1):
     dependencies:
-      '@remix-run/router': 1.23.1
+      '@remix-run/router': 1.23.2
       react: 18.3.1
 
   react-side-effect@2.1.2(react@18.3.1):
@@ -22807,7 +22765,7 @@ snapshots:
       css-select: 4.3.0
       dom-converter: 0.2.0
       htmlparser2: 6.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       strip-ansi: 6.0.1
 
   replace-in-file@7.2.0:
@@ -23510,8 +23468,6 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  strnum@1.1.2: {}
-
   strnum@2.1.1: {}
 
   stubs@3.0.0: {}
@@ -23560,7 +23516,7 @@ snapshots:
       formidable: 3.5.4
       methods: 1.1.2
       mime: 2.6.0
-      qs: 6.14.0
+      qs: 6.14.1
     transitivePeerDependencies:
       - supports-color
 
@@ -23644,14 +23600,13 @@ snapshots:
       - bare-abort-controller
       - react-native-b4a
 
-  tar@6.2.1:
+  tar@7.5.7:
     dependencies:
-      chownr: 2.0.0
-      fs-minipass: 2.1.0
-      minipass: 5.0.0
-      minizlib: 2.1.2
-      mkdirp: 1.0.4
-      yallist: 4.0.0
+      '@isaacs/fs-minipass': 4.0.1
+      chownr: 3.0.0
+      minipass: 7.1.2
+      minizlib: 3.1.0
+      yallist: 5.0.0
 
   tarn@3.0.2: {}
 
@@ -23733,7 +23688,7 @@ snapshots:
       ssh-remote-port-forward: 1.0.4
       tar-fs: 3.1.1
       tmp: 0.2.5
-      undici: 5.29.0
+      undici: 7.18.2
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -23896,7 +23851,7 @@ snapshots:
       acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
-      diff: 4.0.2
+      diff: 5.2.2
       make-error: 1.3.6
       typescript: 5.5.4
       v8-compile-cache-lib: 3.0.1
@@ -23916,7 +23871,7 @@ snapshots:
       acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
-      diff: 4.0.2
+      diff: 5.2.2
       make-error: 1.3.6
       typescript: 5.9.3
       v8-compile-cache-lib: 3.0.1
@@ -23937,7 +23892,7 @@ snapshots:
       acorn-walk: 8.3.4
       arg: 4.1.3
       create-require: 1.1.1
-      diff: 4.0.2
+      diff: 5.2.2
       make-error: 1.3.6
       typescript: 5.9.3
       v8-compile-cache-lib: 3.0.1
@@ -24086,11 +24041,7 @@ snapshots:
 
   undici-types@7.16.0: {}
 
-  undici@5.29.0:
-    dependencies:
-      '@fastify/busboy': 2.1.1
-
-  undici@7.16.0: {}
+  undici@7.18.2: {}
 
   unified@10.1.2:
     dependencies:
@@ -24196,7 +24147,7 @@ snapshots:
   url@0.11.4:
     dependencies:
       punycode: 1.4.1
-      qs: 6.14.0
+      qs: 6.14.1
 
   urllib@3.27.3:
     dependencies:
@@ -24207,9 +24158,9 @@ snapshots:
       formstream: 1.5.2
       mime-types: 2.1.35
       pump: 3.0.3
-      qs: 6.14.0
+      qs: 6.14.1
       type-fest: 4.41.0
-      undici: 5.29.0
+      undici: 7.18.2
       ylru: 1.4.0
 
   use-memo-one@1.1.3(react@18.3.1):
@@ -24247,7 +24198,7 @@ snapshots:
   uvu@0.5.6:
     dependencies:
       dequal: 2.0.3
-      diff: 5.2.0
+      diff: 5.2.2
       kleur: 4.1.5
       sade: 1.8.1
 
@@ -24628,6 +24579,8 @@ snapshots:
   yallist@3.1.1: {}
 
   yallist@4.0.0: {}
+
+  yallist@5.0.0: {}
 
   yaml@1.10.2: {}
 

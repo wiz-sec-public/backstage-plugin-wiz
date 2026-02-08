@@ -1,6 +1,6 @@
 {
   "name": "backstage-plugin-wiz",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "engines": {
     "node": "24"
@@ -52,13 +52,21 @@
   "packageManager": "pnpm@10.23.0",
   "pnpm": {
     "overrides": {
-      "tar-fs": "^3.1.1",
-      "jws": ">=4.0.1",
-      "@octokit/request-error": ">=5.1.1",
-      "@octokit/request": ">=8.4.1",
-      "@octokit/plugin-paginate-rest": ">=9.2.2",
-      "prismjs": ">=1.30.0",
-      "koa": ">=2.16.3 <3.0.0"
+      "tar-fs": "3.1.1",
+      "jws": "4.0.1",
+      "@octokit/request-error": "5.1.1",
+      "@octokit/request": "8.4.1",
+      "@octokit/plugin-paginate-rest": "14.0.0",
+      "prismjs": "1.30.0",
+      "koa": "2.16.3",
+      "qs": "6.14.1",
+      "@remix-run/router": "1.23.2",
+      "tar": "7.5.7",
+      "fast-xml-parser": "5.3.4",
+      "lodash": "4.17.23",
+      "@backstage/cli-common": "0.1.17",
+      "diff": "5.2.2",
+      "undici": "7.18.2"
     }
   }
 }
