@@ -16,7 +16,7 @@ This plugin provides backend functionality for integrating Wiz security informat
 
 ```bash
 # From your Backstage root directory
-yarn add --cwd packages/backend @wiz-sec/backstage-plugin-wiz-backend
+yarn --cwd packages/backend add @wiz-sec/backstage-plugin-wiz-backend
 ```
 
 ## Configuration
