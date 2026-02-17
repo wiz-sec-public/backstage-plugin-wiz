@@ -66,7 +66,8 @@
       "lodash": "4.17.23",
       "@backstage/cli-common": "0.1.17",
       "diff": "5.2.2",
-      "undici": "7.18.2"
+      "undici": "7.18.2",
+      "ajv": "8.18.0"
     }
   }
 }
