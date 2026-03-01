@@ -7,6 +7,9 @@ ignoredBuiltDependencies:
 
 minimumReleaseAge: 7200 # 5 days in minutes
 
+minimumReleaseAgeExclude:
+  - minimatch # security fix 9.0.6 released Feb 22 2026
+
 onlyBuiltDependencies:
   - '@swc/core' # downloads platform-specific prebuilt binaries
   - better-sqlite3 # downloads platform-specific prebuilt binaries
