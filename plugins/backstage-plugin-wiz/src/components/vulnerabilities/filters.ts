@@ -1,9 +1,12 @@
-import { EntityIds } from '../../types';
+import { EntityIds, EntityTag } from '../../types';
 
 export type Filters = {
   projectId?: string[];
   assetId?: string[];
   vulnerabilityExternalId?: string[];
+  assetTags?: {
+    containsAny: EntityTag[];
+  };
 };
 
 export const buildFilterBy = (
@@ -33,6 +36,11 @@ export const buildFilterBy = (
     if (allIds.length > 0) {
       filter.assetId = allIds;
     }
+  }
+
+  // Add resource tag filtering
+  if (entityIds.entityTags.length > 0) {
+    filter.assetTags = { containsAny: entityIds.entityTags };
   }
 
   if (searchText?.trim()) {

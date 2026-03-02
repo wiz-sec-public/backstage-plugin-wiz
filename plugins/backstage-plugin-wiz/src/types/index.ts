@@ -145,9 +145,15 @@ export interface IdsResult {
   error?: Error;
 }
 
+export interface EntityTag {
+  key: string;
+  value: string;
+}
+
 export interface EntityIds {
   cloudResourceIds: string[];
   versionControlIds: string[];
   directAssetIds: string[];
   projectIds: string[];
+  entityTags: EntityTag[];
 }
