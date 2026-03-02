@@ -22,8 +22,15 @@ export async function handleGetIssues(
     if (queryParams.relatedEntity) {
       try {
         const relatedEntity = JSON.parse(String(queryParams.relatedEntity));
+        const relatedEntityFilter: Record<string, unknown> = {};
         if (relatedEntity.ids) {
-          filters.relatedEntity = { ids: relatedEntity.ids };
+          relatedEntityFilter.ids = relatedEntity.ids;
+        }
+        if (relatedEntity.tag) {
+          relatedEntityFilter.tag = relatedEntity.tag;
+        }
+        if (Object.keys(relatedEntityFilter).length > 0) {
+          filters.relatedEntity = relatedEntityFilter;
         }
       } catch (error) {
         throw new WizError(
@@ -67,10 +74,20 @@ export async function handleGetVulnerabilities(
       filters.assetId = queryParams.assetId;
     }
 
-    if (queryParams.assetTags?.containsAny) {
-      filters.assetTags = {
-        containsAny: queryParams.assetTags.containsAny,
-      };
+    if (queryParams.assetTags) {
+      try {
+        const parsedAssetTags = JSON.parse(String(queryParams.assetTags));
+        if (parsedAssetTags?.containsAny) {
+          filters.assetTags = { containsAny: parsedAssetTags.containsAny };
+        }
+      } catch (error) {
+        throw new WizError(
+          WizErrorType.INVALID_REQUEST,
+          'Invalid assetTags format',
+          400,
+          error,
+        );
+      }
     }
 
     if (queryParams.vulnerabilityExternalId) {
@@ -104,8 +121,15 @@ export async function handleGetIssuesStats(
     if (queryParams.relatedEntity) {
       try {
         const relatedEntity = JSON.parse(String(queryParams.relatedEntity));
+        const relatedEntityFilter: Record<string, unknown> = {};
         if (relatedEntity.ids) {
-          filters.relatedEntity = { ids: relatedEntity.ids };
+          relatedEntityFilter.ids = relatedEntity.ids;
+        }
+        if (relatedEntity.tag) {
+          relatedEntityFilter.tag = relatedEntity.tag;
+        }
+        if (Object.keys(relatedEntityFilter).length > 0) {
+          filters.relatedEntity = relatedEntityFilter;
         }
       } catch (error) {
         throw new WizError(

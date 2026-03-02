@@ -7,12 +7,13 @@ import {
 } from '@backstage/plugin-catalog-react';
 import { useEffect, useState } from 'react';
 import { WizAPI, wizApiRef } from '../api';
-import { EntityIds, IdsResult } from '../types';
+import { EntityIds, EntityTag, IdsResult } from '../types';
 import {
   WIZ_ASSET_ANNOTATION,
   WIZ_EXTERNAL_ASSET_ANNOTATION,
   WIZ_PROJECT_ANNOTATION,
   WIZ_REPO_ANNOTATION,
+  WIZ_TAGS_ANNOTATION,
 } from '../utils/constants';
 import { Overview } from './Overview';
 
@@ -61,8 +62,32 @@ async function getVersionControlIds(
   }
 }
 
+/**
+ * Parses the wiz.io/resource-tags annotation value into EntityTag objects.
+ * Supports comma-separated "key=value" pairs.
+ * Example: "custom/env=prod,custom/team=backend" → [{key:"custom/env",value:"prod"},{key:"custom/team",value:"backend"}]
+ */
+function parseResourceTags(annotation: string | undefined): EntityTag[] {
+  if (!annotation) return [];
+  return annotation
+    .split(',')
+    .map(tag => tag.trim())
+    .filter(tag => tag.includes('='))
+    .map(tag => {
+      const eqIndex = tag.indexOf('=');
+      return {
+        key: tag.substring(0, eqIndex).trim(),
+        value: tag.substring(eqIndex + 1).trim(),
+      };
+    })
+    .filter(tag => tag.key && tag.value);
+}
+
 export const isWizAvailable = (entity: Entity) => {
-  return Boolean(entity?.metadata.annotations?.[WIZ_PROJECT_ANNOTATION]);
+  return Boolean(
+    entity?.metadata.annotations?.[WIZ_PROJECT_ANNOTATION] ||
+      entity?.metadata.annotations?.[WIZ_TAGS_ANNOTATION],
+  );
 };
 
 export const areWizAnnotationsMissing = (entity: Entity) => {
@@ -73,6 +98,7 @@ export const areWizAnnotationsMissing = (entity: Entity) => {
     WIZ_ASSET_ANNOTATION,
     WIZ_EXTERNAL_ASSET_ANNOTATION,
     WIZ_REPO_ANNOTATION,
+    WIZ_TAGS_ANNOTATION,
   ];
 
   const hasRequiredAnnotation = requiredAnnotations.some(
@@ -92,6 +118,7 @@ const MainPage = () => {
     versionControlIds: [],
     directAssetIds: [],
     projectIds: [],
+    entityTags: [],
   });
 
   useEffect(() => {
@@ -143,12 +170,18 @@ const MainPage = () => {
           );
         }
 
+        // Parse resource tags
+        const entityTags = parseResourceTags(
+          annotations[WIZ_TAGS_ANNOTATION],
+        );
+
         // Set all IDs
         setEntityIds({
           cloudResourceIds: cloudResourcesResult.ids || [],
           versionControlIds: versionControlResult.ids || [],
           directAssetIds,
           projectIds,
+          entityTags,
         });
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to fetch IDs'));
@@ -196,7 +229,7 @@ const MainPage = () => {
       return (
         <EmptyState
           title="No Resources Found"
-          description="No Wiz resources and projects, repositories or cloud assets were found for this entity."
+          description="No Wiz resources, projects, repositories, cloud assets or resource tags were found for this entity."
           missing="info"
         />
       );

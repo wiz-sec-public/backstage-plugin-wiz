@@ -1,9 +1,12 @@
-import { EntityIds } from '../../types';
+import { EntityIds, EntityTag } from '../../types';
 
 export type Filters = {
   project?: string[];
   relatedEntity?: {
     ids?: string[];
+    tag?: {
+      containsAll: EntityTag[];
+    };
   };
   search?: string;
 };
@@ -35,6 +38,14 @@ export const buildFilterBy = (
     if (allIds.length > 0) {
       filter.relatedEntity = { ids: allIds };
     }
+  }
+
+  // Add resource tag filtering
+  if (entityIds.entityTags.length > 0) {
+    filter.relatedEntity = {
+      ...(filter.relatedEntity || {}),
+      tag: { containsAll: entityIds.entityTags },
+    };
   }
 
   if (searchText?.trim()) {
