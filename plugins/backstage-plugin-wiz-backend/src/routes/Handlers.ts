@@ -1,5 +1,6 @@
 import express from 'express';
 import { z } from 'zod';
+import type { LoggerService } from '@backstage/backend-plugin-api';
 import { WizClient } from '../services/WizClient';
 import { WizError, WizErrorType } from '../types';
 
@@ -10,6 +11,7 @@ export async function handleGetIssues(
   res: express.Response,
   next: express.NextFunction,
   wizClient: WizClient,
+  logger: LoggerService,
 ) {
   try {
     const queryParams = genericQuerySchema.parse(req.query);
@@ -46,6 +48,10 @@ export async function handleGetIssues(
       filters.search = queryParams.search;
     }
 
+    logger.debug('Wiz Issues: assembled filters', {
+      filters: JSON.stringify(filters, null, 2),
+    });
+
     const result = await wizClient.getIssues(
       filters,
       queryParams.after || null,
@@ -61,6 +67,7 @@ export async function handleGetVulnerabilities(
   res: express.Response,
   next: express.NextFunction,
   wizClient: WizClient,
+  logger: LoggerService,
 ) {
   try {
     const queryParams = genericQuerySchema.parse(req.query);
@@ -94,6 +101,10 @@ export async function handleGetVulnerabilities(
       filters.vulnerabilityExternalId = queryParams.vulnerabilityExternalId;
     }
 
+    logger.debug('Wiz Vulnerabilities: assembled filters', {
+      filters: JSON.stringify(filters, null, 2),
+    });
+
     const result = await wizClient.getVulnerabilityFindings(
       filters,
       queryParams.after || null,
@@ -109,6 +120,7 @@ export async function handleGetIssuesStats(
   res: express.Response,
   next: express.NextFunction,
   wizClient: WizClient,
+  logger: LoggerService,
 ) {
   try {
     const queryParams = genericQuerySchema.parse(req.query);
@@ -141,6 +153,10 @@ export async function handleGetIssuesStats(
       }
     }
 
+    logger.debug('Wiz Issues Stats: assembled filters', {
+      filters: JSON.stringify(filters, null, 2),
+    });
+
     const [severityCounts, groupedCounts] = await Promise.all([
       wizClient.getIssuesSeverityCounts(filters),
       wizClient.getIssuesGroupedCount(filters),
@@ -157,6 +173,7 @@ export async function handleGetCloudResources(
   res: express.Response,
   next: express.NextFunction,
   wizClient: WizClient,
+  logger: LoggerService,
 ) {
   try {
     const queryParams = genericQuerySchema.parse(req.query);
@@ -167,6 +184,11 @@ export async function handleGetCloudResources(
         queryParams.providerUniqueId,
       );
     }
+
+    logger.debug('Wiz Cloud Resources: assembled filters', {
+      filters: JSON.stringify(filters, null, 2),
+    });
+
     const result = await wizClient.getAllCloudResources(filters);
     res.status(200).json(result);
   } catch (error) {
@@ -179,6 +201,7 @@ export async function handleGetVersionControl(
   res: express.Response,
   next: express.NextFunction,
   wizClient: WizClient,
+  logger: LoggerService,
 ) {
   try {
     const queryParams = genericQuerySchema.parse(req.query);
@@ -187,6 +210,10 @@ export async function handleGetVersionControl(
     if (queryParams.search) {
       filters.search = queryParams.search;
     }
+
+    logger.debug('Wiz Version Control: assembled filters', {
+      filters: JSON.stringify(filters, null, 2),
+    });
 
     const result = await wizClient.getVersionControlResources(filters);
     res.status(200).json(result);

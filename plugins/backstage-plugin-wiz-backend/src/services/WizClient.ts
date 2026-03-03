@@ -22,6 +22,7 @@ import {
 } from '../types';
 import { WizAuth } from './WizAuth';
 import type { Config } from '@backstage/config';
+import type { LoggerService } from '@backstage/backend-plugin-api';
 
 const INTEGRATION_ID = 'e63efba8-1707-4a4a-a096-e887d27a092c' as const;
 
@@ -37,10 +38,12 @@ export class WizClient {
   private accessToken: string | null = null;
   private tokenExpiresAt: number | null = null;
   private readonly apiEndpointUrl: string;
+  private readonly logger: LoggerService;
 
-  constructor(config: Config) {
+  constructor(config: Config, logger: LoggerService) {
     this.authService = new WizAuth(config);
     this.apiEndpointUrl = config.getString(CONFIG_KEYS.API_ENDPOINT_URL);
+    this.logger = logger;
   }
 
   private async ensureValidToken(): Promise<void> {
@@ -58,6 +61,14 @@ export class WizClient {
     variables: Record<string, unknown>,
   ): Promise<T> {
     await this.ensureValidToken();
+
+    // Extract the query operation name for cleaner logs
+    const operationName =
+      query.match(/^\s*query\s+(\w+)/)?.[1] ?? 'UnknownQuery';
+    this.logger.debug(
+      `Wiz GraphQL request: ${operationName}`,
+      { variables: JSON.stringify(variables, null, 2) },
+    );
 
     try {
       const response = await fetch(this.apiEndpointUrl, {
