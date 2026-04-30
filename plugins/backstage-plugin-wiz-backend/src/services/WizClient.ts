@@ -5,17 +5,21 @@ import { ISSUES_SEVERITY_COUNTS_QUERY } from '../queries/issuesCounts';
 import { ISSUES_GROUPED_COUNT_QUERY } from '../queries/issuesGrouped';
 import { CLOUD_RESOURCES_QUERY } from '../queries/cloudResources';
 import { VERSION_CONTROL_RESOURCES_QUERY } from '../queries/versionControlResources';
+import { GRAPH_SEARCH_QUERY } from '../queries/graphSearch';
 import {
   type CloudResourcesResponse,
   ErrorHttpStatusMap,
   ErrorTypeMap,
   GraphQLErrorCode,
   type GraphQLResponse,
+  type GraphSearchData,
+  type GraphSearchEntity,
   type IssuesResponse,
   type IssuesCountsResponse,
   type IssuesGroupedResponse,
   PaginatedResourceResponse,
   type VersionControlResourcesResponse,
+  type VulnerabilityFindingsData,
   type VulnerabilityFindingsResponse,
   WizError,
   WizErrorType,
@@ -182,20 +186,97 @@ export class WizClient {
     filters: Record<string, unknown> = {},
     after: string | null = null,
   ): Promise<VulnerabilityFindingsResponse> {
-    const variables = {
-      first: 20,
-      after,
-      filterBy: {
-        status: ['OPEN'],
-        ...filters,
-      },
-      orderBy: { direction: 'DESC', field: 'RELATED_ISSUE_SEVERITY' },
-    };
+    const MAX_ASSET_IDS_PER_REQUEST = 100;
+    const assetIds = Array.isArray(filters.assetId)
+      ? (filters.assetId as string[])
+      : undefined;
 
-    return this.makeRequest<VulnerabilityFindingsResponse>(
-      VULNERABILITY_FINDINGS_QUERY,
-      variables,
+    // If assetId count is within limits, make a single request
+    if (!assetIds || assetIds.length <= MAX_ASSET_IDS_PER_REQUEST) {
+      const variables = {
+        first: 20,
+        after,
+        filterBy: {
+          status: ['OPEN'],
+          ...filters,
+        },
+        orderBy: { direction: 'DESC', field: 'RELATED_ISSUE_SEVERITY' },
+      };
+
+      return this.makeRequest<VulnerabilityFindingsResponse>(
+        VULNERABILITY_FINDINGS_QUERY,
+        variables,
+      );
+    }
+
+    // Batch mode: split asset IDs into chunks to avoid Wiz API limits
+    this.logger.info(
+      `Batching vulnerability query: ${assetIds.length} asset IDs in ${Math.ceil(assetIds.length / MAX_ASSET_IDS_PER_REQUEST)} batches`,
     );
+
+    const batches: string[][] = [];
+    for (let i = 0; i < assetIds.length; i += MAX_ASSET_IDS_PER_REQUEST) {
+      batches.push(assetIds.slice(i, i + MAX_ASSET_IDS_PER_REQUEST));
+    }
+
+    const results = await Promise.all(
+      batches.map(batch => {
+        const batchFilters = { ...filters, assetId: batch };
+        const variables = {
+          first: 500,
+          after: null,
+          filterBy: { status: ['OPEN'], ...batchFilters },
+          orderBy: { direction: 'DESC', field: 'RELATED_ISSUE_SEVERITY' },
+        };
+        return this.makeRequest<VulnerabilityFindingsResponse>(
+          VULNERABILITY_FINDINGS_QUERY,
+          variables,
+        );
+      }),
+    );
+
+    // Merge and deduplicate results from all batches
+    const seenIds = new Set<string>();
+    const allNodes: VulnerabilityFindingsData['vulnerabilityFindings']['nodes'] =
+      [];
+    let totalCount = 0;
+
+    for (const result of results) {
+      const data = result as unknown as VulnerabilityFindingsData;
+      totalCount += data.vulnerabilityFindings.totalCount;
+      for (const node of data.vulnerabilityFindings.nodes) {
+        if (!seenIds.has(node.id)) {
+          seenIds.add(node.id);
+          allNodes.push(node);
+        }
+      }
+    }
+
+    // Sort by severity (most critical first)
+    const severityOrder: Record<string, number> = {
+      CRITICAL: 0,
+      HIGH: 1,
+      MEDIUM: 2,
+      LOW: 3,
+      INFORMATIONAL: 4,
+      NONE: 5,
+    };
+    allNodes.sort(
+      (a, b) =>
+        (severityOrder[a.CVSSSeverity] ?? 99) -
+        (severityOrder[b.CVSSSeverity] ?? 99),
+    );
+
+    return {
+      vulnerabilityFindings: {
+        totalCount,
+        nodes: allNodes,
+        pageInfo: {
+          hasNextPage: false,
+          endCursor: '',
+        },
+      },
+    } as unknown as VulnerabilityFindingsResponse;
   }
 
   async getIssuesSeverityCounts(
@@ -319,5 +400,94 @@ export class WizClient {
         },
       } as Record<K, PaginatedResourceResponse<T>>,
     };
+  }
+
+  async getGraphSearchEntities(
+    kubernetesAnnotations: Array<{ key: string; value: string }>,
+    projectId: string = '*',
+  ): Promise<{ entityIds: string[]; containerImageIds: string[] }> {
+    const whereConditions = kubernetesAnnotations.map(ann => ({
+      annotations: { CONTAINS: [`"${ann.key}":"${ann.value}"`] },
+    }));
+
+    const queryInput = {
+      type: ['KUBERNETES_RESOURCE'],
+      select: true,
+      where: { _and: whereConditions },
+      relationships: [
+        {
+          type: [{ type: 'CONTAINS' }],
+          with: {
+            type: ['CONTAINER'],
+            select: true,
+            relationships: [
+              {
+                type: [{ type: 'INSTANCE_OF' }],
+                with: {
+                  type: ['CONTAINER_IMAGE'],
+                  select: true,
+                },
+              },
+            ],
+          },
+        },
+      ],
+    };
+
+    const allEntities: GraphSearchEntity[] = [];
+    let hasNextPage = true;
+    let after: string | null = null;
+    let totalFetched = 0;
+    const maxResults = 10000;
+    const pageSize = 500;
+
+    while (hasNextPage) {
+      const variables: { query: typeof queryInput; projectId: string; first: number; after: string | null } = {
+        query: queryInput,
+        projectId,
+        first: pageSize,
+        after,
+      };
+
+      const response: GraphSearchData = await this.makeRequest<GraphSearchData>(
+        GRAPH_SEARCH_QUERY,
+        variables,
+      );
+
+      if (!response.graphSearch?.nodes) {
+        throw new WizError(
+          WizErrorType.API_ERROR,
+          'Invalid graphSearch response format from Wiz API',
+          500,
+        );
+      }
+
+      for (const node of response.graphSearch.nodes) {
+        allEntities.push(...node.entities);
+      }
+
+      totalFetched += response.graphSearch.nodes.length;
+      hasNextPage = response.graphSearch.pageInfo.hasNextPage;
+      after = response.graphSearch.pageInfo.endCursor;
+
+      if (totalFetched >= maxResults) {
+        throw new WizError(
+          WizErrorType.API_ERROR,
+          'Too many graph search results. Please refine your annotation filters.',
+          400,
+        );
+      }
+    }
+
+    const entityIds = [...new Set(allEntities.map(e => e.id))];
+    const containerImageIds = [
+      ...new Set(
+        allEntities
+          .filter(e => e.type === 'CONTAINER_IMAGE')
+          .map(e => e.id),
+      ),
+    ];
+
+    return { entityIds, containerImageIds };
   }
 }

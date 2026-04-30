@@ -56,4 +56,5 @@ site
 
 .pnpm-store/
 response.txt
-CONTRIBUTE.md*.tgz
+CONTRIBUTE.md
+*.tgz
