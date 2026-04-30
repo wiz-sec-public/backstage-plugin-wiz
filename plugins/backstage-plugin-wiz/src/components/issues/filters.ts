@@ -1,12 +1,9 @@
-import { EntityIds, EntityTag } from '../../types';
+import { EntityIds } from '../../types';
 
 export type Filters = {
   project?: string[];
   relatedEntity?: {
     ids?: string[];
-    tag?: {
-      containsAll: EntityTag[];
-    };
   };
   search?: string;
 };
@@ -28,24 +25,22 @@ export const buildFilterBy = (
     entityIds.versionControlIds.length ? entityIds.versionControlIds : null,
   ].filter((ids): ids is string[] => ids !== null);
 
+  let resolvedIds: string[] = [];
   if (idSets.length > 0) {
     // Find intersection of all ID sets
-    const allIds = idSets.reduce((intersection, currentIds) => {
+    resolvedIds = idSets.reduce((intersection, currentIds) => {
       if (intersection.length === 0) return currentIds;
       return intersection.filter(id => currentIds.includes(id));
     }, [] as string[]);
-
-    if (allIds.length > 0) {
-      filter.relatedEntity = { ids: allIds };
-    }
   }
 
-  // Add resource tag filtering
-  if (entityIds.entityTags.length > 0) {
-    filter.relatedEntity = {
-      ...(filter.relatedEntity || {}),
-      tag: { containsAll: entityIds.entityTags },
-    };
+  // Union with graph search entity IDs (these come from K8S graph traversal)
+  const allIds = [
+    ...new Set([...resolvedIds, ...entityIds.graphEntityIds]),
+  ];
+
+  if (allIds.length > 0) {
+    filter.relatedEntity = { ids: allIds };
   }
 
   if (searchText?.trim()) {

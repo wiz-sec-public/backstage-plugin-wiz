@@ -1,12 +1,9 @@
-import { EntityIds, EntityTag } from '../../types';
+import { EntityIds } from '../../types';
 
 export type Filters = {
   projectId?: string[];
   assetId?: string[];
   vulnerabilityExternalId?: string[];
-  assetTags?: {
-    containsAny: EntityTag[];
-  };
 };
 
 export const buildFilterBy = (
@@ -26,21 +23,22 @@ export const buildFilterBy = (
     entityIds.versionControlIds.length ? entityIds.versionControlIds : null,
   ].filter((ids): ids is string[] => ids !== null);
 
+  let resolvedIds: string[] = [];
   if (idSets.length > 0) {
     // Find intersection of all ID sets
-    const allIds = idSets.reduce((intersection, currentIds) => {
+    resolvedIds = idSets.reduce((intersection, currentIds) => {
       if (intersection.length === 0) return currentIds;
       return intersection.filter(id => currentIds.includes(id));
     }, [] as string[]);
-
-    if (allIds.length > 0) {
-      filter.assetId = allIds;
-    }
   }
 
-  // Add resource tag filtering
-  if (entityIds.entityTags.length > 0) {
-    filter.assetTags = { containsAny: entityIds.entityTags };
+  // Union with graph search container image IDs (discovered via K8S graph traversal)
+  const allAssetIds = [
+    ...new Set([...resolvedIds, ...entityIds.graphContainerImageIds]),
+  ];
+
+  if (allAssetIds.length > 0) {
+    filter.assetId = allAssetIds;
   }
 
   if (searchText?.trim()) {

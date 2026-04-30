@@ -7,13 +7,13 @@ import {
 } from '@backstage/plugin-catalog-react';
 import { useEffect, useState } from 'react';
 import { WizAPI, wizApiRef } from '../api';
-import { EntityIds, EntityTag, IdsResult } from '../types';
+import { EntityIds, IdsResult, GraphSearchResult } from '../types';
 import {
   WIZ_ASSET_ANNOTATION,
   WIZ_EXTERNAL_ASSET_ANNOTATION,
   WIZ_PROJECT_ANNOTATION,
   WIZ_REPO_ANNOTATION,
-  WIZ_TAGS_ANNOTATION,
+  WIZ_K8S_ANNOTATIONS_ANNOTATION,
 } from '../utils/constants';
 import { Overview } from './Overview';
 
@@ -63,11 +63,13 @@ async function getVersionControlIds(
 }
 
 /**
- * Parses the wiz.io/resource-tags annotation value into EntityTag objects.
+ * Parses the wiz.io/kubernetes-annotations annotation value into key-value pairs.
  * Supports comma-separated "key=value" pairs.
- * Example: "custom/env=prod,custom/team=backend" → [{key:"custom/env",value:"prod"},{key:"custom/team",value:"backend"}]
+ * Example: "nos.pt/backstage-component=batch,nos.pt/backstage-system=WACS"
  */
-function parseResourceTags(annotation: string | undefined): EntityTag[] {
+function parseKubernetesAnnotations(
+  annotation: string | undefined,
+): Array<{ key: string; value: string }> {
   if (!annotation) return [];
   return annotation
     .split(',')
@@ -83,10 +85,25 @@ function parseResourceTags(annotation: string | undefined): EntityTag[] {
     .filter(tag => tag.key && tag.value);
 }
 
+async function getGraphSearchIds(
+  annotations: Array<{ key: string; value: string }>,
+  wizApi: WizAPI,
+  projectId?: string,
+): Promise<GraphSearchResult> {
+  try {
+    return await wizApi.fetchGraphSearch(annotations, projectId);
+  } catch (error) {
+    return {
+      entityIds: [],
+      containerImageIds: [],
+    };
+  }
+}
+
 export const isWizAvailable = (entity: Entity) => {
   return Boolean(
     entity?.metadata.annotations?.[WIZ_PROJECT_ANNOTATION] ||
-      entity?.metadata.annotations?.[WIZ_TAGS_ANNOTATION],
+      entity?.metadata.annotations?.[WIZ_K8S_ANNOTATIONS_ANNOTATION],
   );
 };
 
@@ -98,7 +115,7 @@ export const areWizAnnotationsMissing = (entity: Entity) => {
     WIZ_ASSET_ANNOTATION,
     WIZ_EXTERNAL_ASSET_ANNOTATION,
     WIZ_REPO_ANNOTATION,
-    WIZ_TAGS_ANNOTATION,
+    WIZ_K8S_ANNOTATIONS_ANNOTATION,
   ];
 
   const hasRequiredAnnotation = requiredAnnotations.some(
@@ -118,7 +135,8 @@ const MainPage = () => {
     versionControlIds: [],
     directAssetIds: [],
     projectIds: [],
-    entityTags: [],
+    graphEntityIds: [],
+    graphContainerImageIds: [],
   });
 
   useEffect(() => {
@@ -151,12 +169,30 @@ const MainPage = () => {
 
         // Fetch IDs from external sources
         const emptyResult: IdsResult = { ids: [] };
-        const [cloudResourcesResult, versionControlResult] = await Promise.all([
-          externalAssetIds?.length
-            ? getCloudResourceIds(externalAssetIds, api)
-            : emptyResult,
-          repoIds?.length ? getVersionControlIds(repoIds, api) : emptyResult,
-        ]);
+        const emptyGraphResult: GraphSearchResult = {
+          entityIds: [],
+          containerImageIds: [],
+        };
+
+        // Parse kubernetes annotations for graph search
+        const k8sAnnotations = parseKubernetesAnnotations(
+          annotations[WIZ_K8S_ANNOTATIONS_ANNOTATION],
+        );
+
+        const [cloudResourcesResult, versionControlResult, graphSearchResult] =
+          await Promise.all([
+            externalAssetIds?.length
+              ? getCloudResourceIds(externalAssetIds, api)
+              : emptyResult,
+            repoIds?.length ? getVersionControlIds(repoIds, api) : emptyResult,
+            k8sAnnotations.length > 0
+              ? getGraphSearchIds(
+                  k8sAnnotations,
+                  api,
+                  projectIds.length === 1 ? projectIds[0] : undefined,
+                )
+              : emptyGraphResult,
+          ]);
 
         // Handle errors
         if (cloudResourcesResult.error) {
@@ -170,18 +206,14 @@ const MainPage = () => {
           );
         }
 
-        // Parse resource tags
-        const entityTags = parseResourceTags(
-          annotations[WIZ_TAGS_ANNOTATION],
-        );
-
         // Set all IDs
         setEntityIds({
           cloudResourceIds: cloudResourcesResult.ids || [],
           versionControlIds: versionControlResult.ids || [],
           directAssetIds,
           projectIds,
-          entityTags,
+          graphEntityIds: graphSearchResult.entityIds,
+          graphContainerImageIds: graphSearchResult.containerImageIds,
         });
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to fetch IDs'));
@@ -229,7 +261,7 @@ const MainPage = () => {
       return (
         <EmptyState
           title="No Resources Found"
-          description="No Wiz resources, projects, repositories, cloud assets or resource tags were found for this entity."
+          description="No Wiz resources, projects, repositories, cloud assets or kubernetes annotations were found for this entity."
           missing="info"
         />
       );

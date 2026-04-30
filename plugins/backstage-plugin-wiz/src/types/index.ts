@@ -145,9 +145,9 @@ export interface IdsResult {
   error?: Error;
 }
 
-export interface EntityTag {
-  key: string;
-  value: string;
+export interface GraphSearchResult {
+  entityIds: string[];
+  containerImageIds: string[];
 }
 
 export interface EntityIds {
@@ -155,5 +155,6 @@ export interface EntityIds {
   versionControlIds: string[];
   directAssetIds: string[];
   projectIds: string[];
-  entityTags: EntityTag[];
+  graphEntityIds: string[];
+  graphContainerImageIds: string[];
 }

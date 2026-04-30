@@ -8,6 +8,7 @@ import {
   IssuesStatsResponse,
   CloudResourcesResponse,
   VersionControlResourcesResponse,
+  GraphSearchResult,
 } from '../types';
 
 export class WizError extends Error {
@@ -271,6 +272,37 @@ export class WizClient implements WizAPI {
 
       const data =
         await this.handleResponse<VersionControlResourcesResponse>(response);
+      return data;
+    } catch (error) {
+      if (error instanceof WizError) {
+        throw error;
+      }
+      throw new WizError(
+        WizErrorType.API_ERROR,
+        error instanceof Error ? error.message : 'An unknown error occurred',
+      );
+    }
+  }
+
+  async fetchGraphSearch(
+    annotations: Array<{ key: string; value: string }>,
+    projectId?: string,
+  ): Promise<GraphSearchResult> {
+    try {
+      const baseUrl = await this.#discoveryApi.getBaseUrl(
+        'backstage-plugin-wiz',
+      );
+      const query = new URLSearchParams();
+      query.append('annotations', JSON.stringify(annotations));
+      if (projectId) {
+        query.append('projectId', projectId);
+      }
+
+      const response = await this.#fetchApi.fetch(
+        `${baseUrl}/wiz-graph-search?${query.toString()}`,
+      );
+
+      const data = await this.handleResponse<GraphSearchResult>(response);
       return data;
     } catch (error) {
       if (error instanceof WizError) {

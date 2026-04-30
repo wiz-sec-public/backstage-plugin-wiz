@@ -14,6 +14,7 @@ import {
   handleGetIssuesStats,
   handleGetCloudResources,
   handleGetVersionControl,
+  handleGetGraphSearch,
 } from './Handlers';
 import { WizError } from '../types';
 
@@ -65,6 +66,9 @@ export async function createRouter(
 
   router.get('/wiz-version-control', (req, res, next) =>
     handleGetVersionControl(req, res, next, wizClient, logger),
+  );
+  router.get('/wiz-graph-search', (req, res, next) =>
+    handleGetGraphSearch(req, res, next, wizClient, logger),
   );
 
   router.use(errorHandler(logger));

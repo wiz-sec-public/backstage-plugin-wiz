@@ -24,15 +24,8 @@ export async function handleGetIssues(
     if (queryParams.relatedEntity) {
       try {
         const relatedEntity = JSON.parse(String(queryParams.relatedEntity));
-        const relatedEntityFilter: Record<string, unknown> = {};
         if (relatedEntity.ids) {
-          relatedEntityFilter.ids = relatedEntity.ids;
-        }
-        if (relatedEntity.tag) {
-          relatedEntityFilter.tag = relatedEntity.tag;
-        }
-        if (Object.keys(relatedEntityFilter).length > 0) {
-          filters.relatedEntity = relatedEntityFilter;
+          filters.relatedEntity = { ids: relatedEntity.ids };
         }
       } catch (error) {
         throw new WizError(
@@ -81,22 +74,6 @@ export async function handleGetVulnerabilities(
       filters.assetId = queryParams.assetId;
     }
 
-    if (queryParams.assetTags) {
-      try {
-        const parsedAssetTags = JSON.parse(String(queryParams.assetTags));
-        if (parsedAssetTags?.containsAny) {
-          filters.assetTags = { containsAny: parsedAssetTags.containsAny };
-        }
-      } catch (error) {
-        throw new WizError(
-          WizErrorType.INVALID_REQUEST,
-          'Invalid assetTags format',
-          400,
-          error,
-        );
-      }
-    }
-
     if (queryParams.vulnerabilityExternalId) {
       filters.vulnerabilityExternalId = queryParams.vulnerabilityExternalId;
     }
@@ -133,15 +110,8 @@ export async function handleGetIssuesStats(
     if (queryParams.relatedEntity) {
       try {
         const relatedEntity = JSON.parse(String(queryParams.relatedEntity));
-        const relatedEntityFilter: Record<string, unknown> = {};
         if (relatedEntity.ids) {
-          relatedEntityFilter.ids = relatedEntity.ids;
-        }
-        if (relatedEntity.tag) {
-          relatedEntityFilter.tag = relatedEntity.tag;
-        }
-        if (Object.keys(relatedEntityFilter).length > 0) {
-          filters.relatedEntity = relatedEntityFilter;
+          filters.relatedEntity = { ids: relatedEntity.ids };
         }
       } catch (error) {
         throw new WizError(
@@ -248,4 +218,70 @@ function parseProviderUniqueIds(providerUniqueId: unknown): string[] {
     'Invalid providerUniqueId format. Expected an array of strings.',
     400,
   );
+}
+
+export async function handleGetGraphSearch(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+  wizClient: WizClient,
+  logger: LoggerService,
+) {
+  try {
+    const queryParams = genericQuerySchema.parse(req.query);
+
+    if (!queryParams.annotations) {
+      throw new WizError(
+        WizErrorType.INVALID_REQUEST,
+        'Missing required parameter: annotations',
+        400,
+      );
+    }
+
+    let annotations: Array<{ key: string; value: string }>;
+    try {
+      annotations = JSON.parse(String(queryParams.annotations));
+      if (
+        !Array.isArray(annotations) ||
+        !annotations.every(
+          a =>
+            typeof a === 'object' &&
+            typeof a.key === 'string' &&
+            typeof a.value === 'string',
+        )
+      ) {
+        throw new Error('Invalid annotations format');
+      }
+    } catch (error) {
+      throw new WizError(
+        WizErrorType.INVALID_REQUEST,
+        'Invalid annotations format. Expected JSON array of {key, value} objects.',
+        400,
+        error,
+      );
+    }
+
+    const projectId = queryParams.projectId
+      ? String(queryParams.projectId)
+      : '*';
+
+    logger.debug('Wiz Graph Search: searching by K8S annotations', {
+      annotations: JSON.stringify(annotations),
+      projectId,
+    });
+
+    const result = await wizClient.getGraphSearchEntities(
+      annotations,
+      projectId,
+    );
+
+    logger.debug('Wiz Graph Search: results', {
+      entityIds: result.entityIds.length,
+      containerImageIds: result.containerImageIds.length,
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 }
