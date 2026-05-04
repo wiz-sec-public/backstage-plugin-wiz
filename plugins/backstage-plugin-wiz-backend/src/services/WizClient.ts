@@ -186,6 +186,24 @@ export class WizClient {
     filters: Record<string, unknown> = {},
     after: string | null = null,
   ): Promise<VulnerabilityFindingsResponse> {
+    // Guard: Wiz API rejects unscoped vulnerability queries (no projectId or assetId)
+    const hasProjectId = filters.projectId && (Array.isArray(filters.projectId) ? filters.projectId.length > 0 : true);
+    const hasAssetId = filters.assetId && (Array.isArray(filters.assetId) ? filters.assetId.length > 0 : true);
+    const hasVulnId = filters.vulnerabilityExternalId && (Array.isArray(filters.vulnerabilityExternalId) ? filters.vulnerabilityExternalId.length > 0 : true);
+
+    if (!hasProjectId && !hasAssetId && !hasVulnId) {
+      this.logger.debug('Skipping vulnerability query: no scoping filters provided');
+      return {
+        data: {
+          vulnerabilityFindings: {
+            totalCount: 0,
+            nodes: [],
+            pageInfo: { hasNextPage: false, endCursor: '' },
+          },
+        },
+      } as unknown as VulnerabilityFindingsResponse;
+    }
+
     const MAX_ASSET_IDS_PER_REQUEST = 100;
     const assetIds = Array.isArray(filters.assetId)
       ? (filters.assetId as string[])

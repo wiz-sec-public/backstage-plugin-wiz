@@ -1,33 +1,8 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { styled } from '@mui/material/styles';
 
-const useSeverityStyles = makeStyles(() => ({
-  severityContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.25rem',
-  },
-  severityChip: {
-    borderRadius: '50%',
-    height: '24px',
-    width: '24px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 600,
-    fontSize: '12px',
-    marginRight: '4px',
-  },
-  severityCount: {
-    fontSize: '15px',
-    fontWeight: 500,
-  },
-  severitySection: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-  },
+const severityColors = {
   critical: {
     backgroundColor: 'hsl(360deg 100% 96.8%)',
     color: 'hsl(358deg 65% 47%)',
@@ -53,7 +28,19 @@ const useSeverityStyles = makeStyles(() => ({
     color: 'hsl(220deg 6% 60%)',
     border: '1px solid hsl(220deg 10.4% 89%)',
   },
-}));
+} as const;
+
+const SeverityChipIcon = styled('div')({
+  borderRadius: '50%',
+  height: '24px',
+  width: '24px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontWeight: 600,
+  fontSize: '12px',
+  marginRight: '4px',
+});
 
 type StyleKey = 'critical' | 'high' | 'medium' | 'low' | 'info';
 
@@ -108,22 +95,29 @@ export const SeverityIndicator: React.FC<SeverityIndicatorProps> = ({
   data,
   inline = false,
 }) => {
-  const classes = useSeverityStyles();
-
   return (
     <Box
-      className={inline ? classes.severitySection : classes.severityContainer}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: inline ? '0.5rem' : '0.25rem',
+      }}
     >
       {severityConfig.map(({ key, label, styleKey }) => {
         const count = data[key] ?? 0;
 
         if (count > 0) {
           return (
-            <Box key={key} className={classes.severityContainer}>
-              <div className={`${classes.severityChip} ${classes[styleKey]}`}>
+            <Box
+              key={key}
+              sx={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+            >
+              <SeverityChipIcon sx={severityColors[styleKey]}>
                 {label}
-              </div>
-              <Typography className={classes.severityCount}>{count}</Typography>
+              </SeverityChipIcon>
+              <Typography sx={{ fontSize: '15px', fontWeight: 500 }}>
+                {count}
+              </Typography>
             </Box>
           );
         }

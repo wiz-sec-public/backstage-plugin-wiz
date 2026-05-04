@@ -150,5 +150,3 @@ export const IssuesSummary = ({ entityIds }: IssuesSummaryProps) => {
     </StyledCard>
   );
 };
-
-export default IssuesSummary;

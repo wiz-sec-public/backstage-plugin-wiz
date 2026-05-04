@@ -35,9 +35,7 @@
     "@backstage/core-components": "^0.18.3",
     "@backstage/core-plugin-api": "^1.12.0",
     "@backstage/plugin-catalog-react": "^1.21.3",
-    "@mui/icons-material": "^5.18.0",
     "@mui/material": "^5.18.0",
-    "@mui/styles": "^5.18.0",
     "date-fns": "^4.1.0"
   },
   "peerDependencies": {

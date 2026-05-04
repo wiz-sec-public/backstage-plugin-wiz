@@ -32,9 +32,14 @@ export const buildFilterBy = (
     }, [] as string[]);
   }
 
-  // Union with graph search container image IDs (discovered via K8S graph traversal)
+  // Union with graph search IDs (discovered via K8S graph traversal)
+  // Prefer container image IDs for vulnerabilities; fall back to all entity IDs
+  const graphIds = entityIds.graphContainerImageIds.length > 0
+    ? entityIds.graphContainerImageIds
+    : entityIds.graphEntityIds;
+
   const allAssetIds = [
-    ...new Set([...resolvedIds, ...entityIds.graphContainerImageIds]),
+    ...new Set([...resolvedIds, ...graphIds]),
   ];
 
   if (allAssetIds.length > 0) {
