@@ -1,12 +1,6 @@
 import { Progress } from '@backstage/core-components';
 import { useApi } from '@backstage/core-plugin-api';
-import OpenInNewIconImport from '@mui/icons-material/OpenInNew';
-// Some downstream Backstage builds wrap the default export as `{ default: Icon }`
-// due to CJS/ESM interop differences, which then fails React's element-type check
-// with "Element type is invalid... got: object". Unwrap defensively. See WZ-83111.
-const OpenInNewIcon =
-  (OpenInNewIconImport as unknown as { default?: typeof OpenInNewIconImport })
-    ?.default ?? OpenInNewIconImport;
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
   Box,
   IconButton,
