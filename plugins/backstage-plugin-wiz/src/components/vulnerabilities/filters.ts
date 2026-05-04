@@ -32,14 +32,11 @@ export const buildFilterBy = (
     }, [] as string[]);
   }
 
-  // Union with graph search IDs (discovered via K8S graph traversal)
-  // Prefer container image IDs for vulnerabilities; fall back to all entity IDs
-  const graphIds = entityIds.graphContainerImageIds.length > 0
-    ? entityIds.graphContainerImageIds
-    : entityIds.graphEntityIds;
-
+  // Union with container image IDs (discovered via K8S graph traversal)
+  // Only container images are valid for vulnerability findings queries;
+  // K8s resource entity IDs (deployments, configmaps, etc.) are NOT valid
   const allAssetIds = [
-    ...new Set([...resolvedIds, ...graphIds]),
+    ...new Set([...resolvedIds, ...entityIds.graphContainerImageIds]),
   ];
 
   if (allAssetIds.length > 0) {
