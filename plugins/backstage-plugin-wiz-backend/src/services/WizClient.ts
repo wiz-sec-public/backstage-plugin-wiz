@@ -86,7 +86,7 @@ export class WizClient {
       });
 
       if (!response.ok) {
-        this.handleHttpError(response);
+        await this.handleHttpError(response, operationName);
       }
 
       const data = await response.json();
@@ -96,7 +96,19 @@ export class WizClient {
     }
   }
 
-  private handleHttpError(response: Response): never {
+  private async handleHttpError(response: Response, operationName?: string): Promise<never> {
+    let errorBody: string | undefined;
+    try {
+      errorBody = await response.text();
+    } catch {
+      // ignore read errors
+    }
+
+    this.logger.error(
+      `Wiz API HTTP ${response.status} for ${operationName ?? 'unknown'}`,
+      { status: response.status, statusText: response.statusText, body: errorBody },
+    );
+
     if (response.status === 401) {
       throw new WizError(
         WizErrorType.UNAUTHORIZED,
@@ -114,7 +126,7 @@ export class WizClient {
     throw new WizError(
       WizErrorType.API_ERROR,
       `API request failed: ${response.statusText}`,
-      500,
+      response.status,
     );
   }
 
@@ -193,21 +205,18 @@ export class WizClient {
 
     if (!hasProjectId && !hasAssetId && !hasVulnId) {
       this.logger.debug('Skipping vulnerability query: no scoping filters provided');
-      return {
-        data: {
-          vulnerabilityFindings: {
-            totalCount: 0,
-            nodes: [],
-            pageInfo: { hasNextPage: false, endCursor: '' },
-          },
-        },
-      } as unknown as VulnerabilityFindingsResponse;
+      return this.emptyVulnerabilityResponse();
     }
 
     const MAX_ASSET_IDS_PER_REQUEST = 100;
     const assetIds = Array.isArray(filters.assetId)
       ? (filters.assetId as string[])
       : undefined;
+
+    // Ensure assetId is always an array for the Wiz API
+    if (filters.assetId && !Array.isArray(filters.assetId)) {
+      filters.assetId = [filters.assetId as string];
+    }
 
     // If assetId count is within limits, make a single request
     if (!assetIds || assetIds.length <= MAX_ASSET_IDS_PER_REQUEST) {
@@ -221,10 +230,21 @@ export class WizClient {
         orderBy: { direction: 'DESC', field: 'RELATED_ISSUE_SEVERITY' },
       };
 
-      return this.makeRequest<VulnerabilityFindingsResponse>(
-        VULNERABILITY_FINDINGS_QUERY,
-        variables,
-      );
+      try {
+        return await this.makeRequest<VulnerabilityFindingsResponse>(
+          VULNERABILITY_FINDINGS_QUERY,
+          variables,
+        );
+      } catch (error) {
+        if (error instanceof WizError && error.statusCode === 400) {
+          this.logger.warn(
+            'Wiz rejected vulnerability query with 400 — returning empty results',
+            { filters: JSON.stringify(filters) },
+          );
+          return this.emptyVulnerabilityResponse();
+        }
+        throw error;
+      }
     }
 
     // Batch mode: split asset IDs into chunks to avoid Wiz API limits
@@ -237,21 +257,33 @@ export class WizClient {
       batches.push(assetIds.slice(i, i + MAX_ASSET_IDS_PER_REQUEST));
     }
 
-    const results = await Promise.all(
-      batches.map(batch => {
-        const batchFilters = { ...filters, assetId: batch };
-        const variables = {
-          first: 500,
-          after: null,
-          filterBy: { status: ['OPEN'], ...batchFilters },
-          orderBy: { direction: 'DESC', field: 'RELATED_ISSUE_SEVERITY' },
-        };
-        return this.makeRequest<VulnerabilityFindingsResponse>(
-          VULNERABILITY_FINDINGS_QUERY,
-          variables,
+    let results: VulnerabilityFindingsResponse[];
+    try {
+      results = await Promise.all(
+        batches.map(batch => {
+          const batchFilters = { ...filters, assetId: batch };
+          const variables = {
+            first: 500,
+            after: null,
+            filterBy: { status: ['OPEN'], ...batchFilters },
+            orderBy: { direction: 'DESC', field: 'RELATED_ISSUE_SEVERITY' },
+          };
+          return this.makeRequest<VulnerabilityFindingsResponse>(
+            VULNERABILITY_FINDINGS_QUERY,
+            variables,
+          );
+        }),
+      );
+    } catch (error) {
+      if (error instanceof WizError && error.statusCode === 400) {
+        this.logger.warn(
+          'Wiz rejected batched vulnerability query with 400 — returning empty results',
+          { assetIdCount: assetIds.length },
         );
-      }),
-    );
+        return this.emptyVulnerabilityResponse();
+      }
+      throw error;
+    }
 
     // Merge and deduplicate results from all batches
     const seenIds = new Set<string>();
@@ -293,6 +325,16 @@ export class WizClient {
           hasNextPage: false,
           endCursor: '',
         },
+      },
+    } as unknown as VulnerabilityFindingsResponse;
+  }
+
+  private emptyVulnerabilityResponse(): VulnerabilityFindingsResponse {
+    return {
+      vulnerabilityFindings: {
+        totalCount: 0,
+        nodes: [],
+        pageInfo: { hasNextPage: false, endCursor: '' },
       },
     } as unknown as VulnerabilityFindingsResponse;
   }
