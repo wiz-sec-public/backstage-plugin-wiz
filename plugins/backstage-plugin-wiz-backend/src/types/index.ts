@@ -201,6 +201,28 @@ export type VulnerabilityFindingsResponse =
   GraphQLResponse<VulnerabilityFindingsData>;
 export type IssuesCountsResponse = GraphQLResponse<IssuesCountsData>;
 export type IssuesGroupedResponse = GraphQLResponse<IssuesGroupedData>;
+export interface GraphSearchEntity {
+  id: string;
+  type: string;
+  name: string;
+  providerUniqueId: string;
+}
+
+export interface GraphSearchData {
+  graphSearch: {
+    totalCount: number;
+    pageInfo: {
+      hasNextPage: boolean;
+      endCursor: string;
+    };
+    nodes: Array<{
+      entities: GraphSearchEntity[];
+      aggregateCount: number;
+    }>;
+  };
+}
+
 export type CloudResourcesResponse = GraphQLResponse<CloudResourcesData>;
 export type VersionControlResourcesResponse =
   GraphQLResponse<VersionControlResourcesData>;
+export type GraphSearchResponse = GraphQLResponse<GraphSearchData>;

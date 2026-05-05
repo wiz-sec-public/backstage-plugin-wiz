@@ -145,9 +145,16 @@ export interface IdsResult {
   error?: Error;
 }
 
+export interface GraphSearchResult {
+  entityIds: string[];
+  containerImageIds: string[];
+}
+
 export interface EntityIds {
   cloudResourceIds: string[];
   versionControlIds: string[];
   directAssetIds: string[];
   projectIds: string[];
+  graphEntityIds: string[];
+  graphContainerImageIds: string[];
 }

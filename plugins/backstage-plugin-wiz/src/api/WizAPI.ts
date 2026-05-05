@@ -5,6 +5,7 @@ import {
   IssuesStatsResponse,
   CloudResourcesResponse,
   VersionControlResourcesResponse,
+  GraphSearchResult,
 } from '../types';
 
 export const wizApiRef = createApiRef<WizAPI>({
@@ -30,4 +31,8 @@ export interface WizAPI {
     filters?: Record<string, unknown>,
     after?: string,
   ) => Promise<VersionControlResourcesResponse>;
+  fetchGraphSearch: (
+    annotations: Array<{ key: string; value: string }>,
+    projectId?: string,
+  ) => Promise<GraphSearchResult>;
 }

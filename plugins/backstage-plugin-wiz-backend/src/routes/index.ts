@@ -14,6 +14,7 @@ import {
   handleGetIssuesStats,
   handleGetCloudResources,
   handleGetVersionControl,
+  handleGetGraphSearch,
 } from './Handlers';
 import { WizError } from '../types';
 
@@ -31,7 +32,7 @@ export async function createRouter(
   let wizClient: WizClient;
   let wizAuth: WizAuth;
   try {
-    wizClient = new WizClient(config);
+    wizClient = new WizClient(config, logger);
     wizAuth = new WizAuth(config);
 
     await wizAuth.fetchAccessToken();
@@ -48,23 +49,26 @@ export async function createRouter(
 
   // Mount route handlers first
   router.get('/wiz-issues', (req, res, next) =>
-    handleGetIssues(req, res, next, wizClient),
+    handleGetIssues(req, res, next, wizClient, logger),
   );
 
   router.get('/wiz-vulnerabilities', (req, res, next) =>
-    handleGetVulnerabilities(req, res, next, wizClient),
+    handleGetVulnerabilities(req, res, next, wizClient, logger),
   );
 
   router.get('/wiz-issues-stats', (req, res, next) =>
-    handleGetIssuesStats(req, res, next, wizClient),
+    handleGetIssuesStats(req, res, next, wizClient, logger),
   );
 
   router.get('/wiz-cloud-resources', (req, res, next) =>
-    handleGetCloudResources(req, res, next, wizClient),
+    handleGetCloudResources(req, res, next, wizClient, logger),
   );
 
   router.get('/wiz-version-control', (req, res, next) =>
-    handleGetVersionControl(req, res, next, wizClient),
+    handleGetVersionControl(req, res, next, wizClient, logger),
+  );
+  router.get('/wiz-graph-search', (req, res, next) =>
+    handleGetGraphSearch(req, res, next, wizClient, logger),
   );
 
   router.use(errorHandler(logger));
