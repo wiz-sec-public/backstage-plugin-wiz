@@ -17,6 +17,7 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  TextField,
   Tooltip,
   Typography,
   Paper,
@@ -131,13 +132,10 @@ export const Issues = ({ entityIds }: IssuesProps) => {
     setState(prev => ({ ...prev, searchText: event.target.value }));
   };
 
-  const handleSearchKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (event.key === 'Enter') {
-      const updatedFilters = buildFilterBy(entityIds, state.searchText);
-      setFilters(updatedFilters);
-    }
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const updatedFilters = buildFilterBy(entityIds, state.searchText);
+    setFilters(updatedFilters);
   };
 
   if (error) {
@@ -167,19 +165,16 @@ export const Issues = ({ entityIds }: IssuesProps) => {
         mb={2}
       >
         <Typography variant="h5">Issues</Typography>
-        <input
-          type="text"
-          placeholder="Search Rule or Resource"
-          value={state.searchText}
-          onChange={handleSearchChange}
-          onKeyDown={handleSearchKeyDown}
-          style={{
-            width: '300px',
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
-        />
+        <Box component="form" onSubmit={handleSearchSubmit} sx={{ width: 300 }}>
+          <TextField
+            fullWidth
+            size="small"
+            variant="outlined"
+            placeholder="Search Rule or Resource"
+            value={state.searchText}
+            onChange={handleSearchChange}
+          />
+        </Box>
       </Box>
 
       {state.issues.length > 0 ? (
@@ -188,27 +183,21 @@ export const Issues = ({ entityIds }: IssuesProps) => {
             <Table stickyHeader aria-label="issues table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Issue</TableCell>
-                  <TableCell>Resource</TableCell>
-                  <TableCell>Severity</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Created At</TableCell>
-                  <TableCell align="center">Actions</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Issue</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Resource</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Severity</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Created At</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }} align="center">
+                    Actions
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {getPageData().map(row => (
-                  <TableRow key={row.id}>
-                    <TableCell>
-                      <Typography variant="subtitle1" component="span">
-                        {row.sourceRule?.name || 'N/A'}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="subtitle1" component="span">
-                        {row.entitySnapshot.name}
-                      </Typography>
-                    </TableCell>
+                  <TableRow key={row.id} hover>
+                    <TableCell>{row.sourceRule?.name || 'N/A'}</TableCell>
+                    <TableCell>{row.entitySnapshot.name}</TableCell>
                     <TableCell>
                       <SeverityChip severity={row.severity} />
                     </TableCell>

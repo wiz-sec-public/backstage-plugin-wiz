@@ -30,17 +30,19 @@ const severityColors = {
   },
 } as const;
 
-const SeverityChipIcon = styled('div')({
+const SeverityChipIcon = styled('div')(({ theme }) => ({
   borderRadius: '50%',
   height: '24px',
   width: '24px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  fontFamily: theme.typography.body1.fontFamily,
   fontWeight: 600,
   fontSize: '12px',
+  lineHeight: 1,
   marginRight: '4px',
-});
+}));
 
 type StyleKey = 'critical' | 'high' | 'medium' | 'low' | 'info';
 

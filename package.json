@@ -1,6 +1,6 @@
 {
   "name": "backstage-plugin-wiz",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "private": true,
   "engines": {
     "node": "24"
@@ -85,6 +85,10 @@
       "@tootallnate/once": "3.0.1",
       "@backstage/backend-defaults": "0.15.2",
       "@backstage/backend-plugin-api": "1.7.0",
+      "@backstage/frontend-plugin-api": "0.16.2",
+      "@backstage/plugin-catalog-react": "2.1.4",
+      "@backstage/frontend-test-utils": "0.5.2",
+      "@backstage/filter-predicates>zod": "4.3.6",
       "protobufjs": "7.5.5",
       "handlebars": "4.7.9",
       "node-forge": "1.4.0",

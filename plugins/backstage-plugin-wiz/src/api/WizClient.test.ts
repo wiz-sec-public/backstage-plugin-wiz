@@ -7,7 +7,7 @@ import {
   CloudResourcesResponse,
   VersionControlResourcesResponse,
 } from '../types';
-import { DiscoveryApi, FetchApi, ConfigApi } from '@backstage/core-plugin-api';
+import { DiscoveryApi, FetchApi } from '@backstage/core-plugin-api';
 
 describe('WizClient', () => {
   const mockDiscoveryApi: jest.Mocked<DiscoveryApi> = {
@@ -18,25 +18,6 @@ describe('WizClient', () => {
     fetch: jest.fn(),
   };
 
-  const mockConfigApi: ConfigApi = {
-    has: jest.fn(),
-    keys: jest.fn(),
-    get: jest.fn(),
-    getBoolean: jest.fn(),
-    getConfig: jest.fn(),
-    getConfigArray: jest.fn(),
-    getNumber: jest.fn(),
-    getOptional: jest.fn(),
-    getOptionalBoolean: jest.fn(),
-    getOptionalConfig: jest.fn(),
-    getOptionalConfigArray: jest.fn(),
-    getOptionalNumber: jest.fn(),
-    getOptionalString: jest.fn(),
-    getOptionalStringArray: jest.fn(),
-    getString: jest.fn(),
-    getStringArray: jest.fn(),
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -44,7 +25,6 @@ describe('WizClient', () => {
   const client = new WizClient({
     discoveryApi: mockDiscoveryApi,
     fetchApi: mockFetchApi,
-    configApi: mockConfigApi,
   });
 
   const createMockResponse = <T>(

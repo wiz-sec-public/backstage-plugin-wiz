@@ -18,6 +18,7 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  TextField,
   Tooltip,
   Typography,
   Paper,
@@ -142,13 +143,10 @@ export const VulnerabilitiesTable = ({
     setState(prev => ({ ...prev, searchText: event.target.value }));
   };
 
-  const handleSearchKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (event.key === 'Enter') {
-      const updatedFilters = buildFilterBy(entityIds, state.searchText);
-      setFilters(updatedFilters);
-    }
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const updatedFilters = buildFilterBy(entityIds, state.searchText);
+    setFilters(updatedFilters);
   };
 
   const getPageData = () => {
@@ -178,19 +176,16 @@ export const VulnerabilitiesTable = ({
         mb={2}
       >
         <Typography variant="h5">Vulnerabilities</Typography>
-        <input
-          type="text"
-          placeholder="Search CVE IDs (comma-separated)"
-          value={state.searchText}
-          onChange={handleSearchChange}
-          onKeyDown={handleSearchKeyDown}
-          style={{
-            width: '300px',
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-          }}
-        />
+        <Box component="form" onSubmit={handleSearchSubmit} sx={{ width: 300 }}>
+          <TextField
+            fullWidth
+            size="small"
+            variant="outlined"
+            placeholder="Search CVE IDs (comma-separated)"
+            value={state.searchText}
+            onChange={handleSearchChange}
+          />
+        </Box>
       </Box>
 
       {state.vulnerabilities.length > 0 ? (
@@ -199,27 +194,23 @@ export const VulnerabilitiesTable = ({
             <Table stickyHeader aria-label="vulnerabilities table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Finding</TableCell>
-                  <TableCell>Resource</TableCell>
-                  <TableCell>Severity</TableCell>
-                  <TableCell>Related Issues</TableCell>
-                  <TableCell>Exploits</TableCell>
-                  <TableCell>First Detected</TableCell>
-                  <TableCell>Last Detected</TableCell>
-                  <TableCell align="center">Actions</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Finding</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Resource</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Severity</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Related Issues</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Exploits</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>First Detected</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Last Detected</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }} align="center">
+                    Actions
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {getPageData().map(row => (
-                  <TableRow key={row.id}>
-                    <TableCell>
-                      <Typography variant="subtitle1">{row.name}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="subtitle1">
-                        {row.vulnerableAsset.name}
-                      </Typography>
-                    </TableCell>
+                  <TableRow key={row.id} hover>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.vulnerableAsset.name}</TableCell>
                     <TableCell>
                       <SeverityChip severity={row.CVSSSeverity} />
                     </TableCell>

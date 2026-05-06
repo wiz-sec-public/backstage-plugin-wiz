@@ -1,6 +1,5 @@
 import {
   createApiFactory,
-  configApiRef,
   createPlugin,
   createRoutableExtension,
   discoveryApiRef,
@@ -20,10 +19,9 @@ export const backstagePluginWizPlugin = createPlugin({
       deps: {
         discoveryApi: discoveryApiRef,
         fetchApi: fetchApiRef,
-        configApiRef: configApiRef,
       },
-      factory: ({ discoveryApi, fetchApi, configApiRef: config }) =>
-        new WizClient({ discoveryApi, fetchApi, configApi: config }),
+      factory: ({ discoveryApi, fetchApi }) =>
+        new WizClient({ discoveryApi, fetchApi }),
     }),
   ],
 });

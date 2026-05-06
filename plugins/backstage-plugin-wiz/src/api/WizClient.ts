@@ -1,5 +1,5 @@
 import { WizAPI } from './WizAPI';
-import { DiscoveryApi, FetchApi, ConfigApi } from '@backstage/core-plugin-api';
+import { DiscoveryApi, FetchApi } from '@backstage/core-plugin-api';
 import {
   WizErrorType,
   WizErrorResponse,
@@ -24,7 +24,6 @@ export class WizError extends Error {
 export type Options = {
   discoveryApi: DiscoveryApi;
   fetchApi: FetchApi;
-  configApi: ConfigApi;
 };
 
 export class WizClient implements WizAPI {
