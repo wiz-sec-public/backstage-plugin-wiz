@@ -7,7 +7,7 @@ import {
 import { WizClient } from '../services/WizClient';
 import { WizAuth } from '../services/WizAuth';
 
-import { errorHandler, formatError } from './ErrorHandler';
+import { errorHandler } from './ErrorHandler';
 import {
   handleGetIssues,
   handleGetVulnerabilities,
@@ -16,7 +16,7 @@ import {
   handleGetVersionControl,
   handleGetGraphSearch,
 } from './Handlers';
-import { WizError } from '../types';
+import { WizError, WizErrorType } from '../types';
 
 export interface RouterOptions {
   logger: LoggerService;
@@ -38,13 +38,23 @@ export async function createRouter(
     await wizAuth.fetchAccessToken();
   } catch (error) {
     if (error instanceof WizError) {
-      logger.error('Failed to initialize Wiz client', {
-        type: error.type,
-        message: error.message,
-        error: formatError(error),
-      });
+      logger.warn(
+        `Wiz plugin disabled: ${error.message} (type=${error.type})`,
+      );
+    } else {
+      logger.warn(
+        `Wiz plugin disabled: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
-    throw error;
+
+    // Return a degraded router that responds with 503 for all routes
+    router.use((_req, res) => {
+      res.status(503).json({
+        error: 'Wiz plugin is not configured',
+        type: WizErrorType.MISSING_CONFIG,
+      });
+    });
+    return router;
   }
 
   // Mount route handlers first
