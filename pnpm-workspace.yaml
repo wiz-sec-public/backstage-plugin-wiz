@@ -9,6 +9,7 @@ minimumReleaseAge: 7200 # 5 days in minutes
 
 minimumReleaseAgeExclude:
   - minimatch # security fix 9.0.6 released Feb 22 2026
+  - brace-expansion # security fix 5.0.6 (CVE-2026-33750)
 
 onlyBuiltDependencies:
   - '@swc/core' # downloads platform-specific prebuilt binaries
