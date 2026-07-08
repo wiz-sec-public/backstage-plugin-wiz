@@ -206,6 +206,23 @@ describe('WizClient', () => {
         'not properly configured',
       );
     });
+
+    it('handles rate limited error from backend 429', async () => {
+      const errorResponse = {
+        type: WizErrorType.RATE_LIMITED,
+        message: 'Wiz API rate limit exceeded',
+      };
+
+      mockFetchApi.fetch.mockResolvedValueOnce(
+        createMockResponse(errorResponse, false, 429),
+      );
+
+      const err = await client.fetchIssues().catch(e => e);
+      expect(err).toBeInstanceOf(Error);
+      expect((err as { type: WizErrorType }).type).toBe(
+        WizErrorType.RATE_LIMITED,
+      );
+    });
   });
 
   describe('fetchIssuesStats', () => {

@@ -23,13 +23,17 @@ import {
   Typography,
   Paper,
 } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { wizApiRef, WizError } from '../../api';
 import { EntityIds, VulnerabilityNode, WizErrorType } from '../../types';
 import { FormattedDateTime } from '../shared/FormattedDateTime';
 import { SeverityChip } from '../shared/SeverityChip';
 import { SeverityIndicator } from '../shared/SeverityIndicator';
 import { WizErrorState } from '../shared/WizErrorState';
+import {
+  isRateLimitError,
+  useRateLimitReporter,
+} from '../shared/WizRateLimitContext';
 import { buildFilterBy, Filters } from './filters';
 
 interface VulnerabilitiesState {
@@ -68,12 +72,22 @@ export const VulnerabilitiesTable = ({
 
   const [filters, setFilters] = useState<Filters>({});
   const [error] = useState<Error>();
+  const report = useRateLimitReporter('vulnerabilities');
+
+  // Guards against stale async responses: each fetch takes the next id, and a
+  // response is applied only if it is still the latest. Without this, a late
+  // response from a previous entity (or filter/page) could set widget state or
+  // report a wrong rate-limit result for the entity now on screen. See WZ-113816.
+  const requestId = useRef(0);
 
   const fetchVulnerabilities = useCallback(
     async (cursor?: string) => {
+      const id = ++requestId.current;
+      const isStale = () => id !== requestId.current;
       setState(prev => ({ ...prev, loading: true }));
       try {
         const result = await api.fetchVulnerabilities(filters, cursor);
+        if (isStale()) return;
         setState(prev => ({
           ...prev,
           vulnerabilities: cursor
@@ -92,7 +106,9 @@ export const VulnerabilitiesTable = ({
           after: result.vulnerabilityFindings.pageInfo.endCursor,
           error: null,
         }));
+        report(null);
       } catch (err) {
+        if (isStale()) return;
         const wizError =
           err instanceof WizError
             ? err
@@ -101,11 +117,12 @@ export const VulnerabilitiesTable = ({
                 'Failed to fetch vulnerabilities',
               );
         setState(prev => ({ ...prev, error: wizError }));
+        report(wizError);
       } finally {
-        setState(prev => ({ ...prev, loading: false }));
+        if (!isStale()) setState(prev => ({ ...prev, loading: false }));
       }
     },
-    [filters, api],
+    [filters, api, report],
   );
 
   useEffect(() => {
@@ -164,7 +181,10 @@ export const VulnerabilitiesTable = ({
   }
 
   if (state.error) {
-    return <WizErrorState error={state.error} />;
+    // Rate-limit is surfaced once at the tab level; suppress this widget's panel.
+    return isRateLimitError(state.error) ? null : (
+      <WizErrorState error={state.error} />
+    );
   }
 
   return (

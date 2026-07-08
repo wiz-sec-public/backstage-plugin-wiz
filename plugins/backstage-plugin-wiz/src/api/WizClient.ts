@@ -64,6 +64,13 @@ export class WizClient implements WizAPI {
             errorData.message || 'Invalid request parameters',
             errorData.details,
           );
+        case WizErrorType.RATE_LIMITED:
+          throw new WizError(
+            WizErrorType.RATE_LIMITED,
+            errorData.message ||
+              'Wiz API rate limit reached. Data will be available again shortly.',
+            errorData.details,
+          );
         default:
           throw new WizError(
             WizErrorType.API_ERROR,

@@ -171,3 +171,10 @@ Common issues and solutions:
    - Verify entity annotations are correct
    - Check backend connectivity
    - Validate API credentials
+
+2. "Wiz API rate limit reached" shown on the entity tab
+   - The Wiz tenant is throttling requests. The backend retries automatically
+     with backoff; refresh the page in a moment to load the data.
+   - For large catalogs, tune `cacheTtlSeconds`, `maxConcurrentRequests`, and
+     `maxRetries` in the backend `wiz:` config to reduce API load (see the
+     backend plugin README).

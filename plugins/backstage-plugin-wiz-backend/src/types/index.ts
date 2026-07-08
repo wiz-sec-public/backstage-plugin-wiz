@@ -4,6 +4,7 @@ export enum WizErrorType {
   FORBIDDEN = 'FORBIDDEN',
   API_ERROR = 'API_ERROR',
   INVALID_REQUEST = 'INVALID_REQUEST',
+  RATE_LIMITED = 'RATE_LIMITED',
 }
 
 export enum GraphQLErrorCode {
@@ -31,7 +32,7 @@ export const ErrorTypeMap: Record<GraphQLErrorCode, WizErrorType> = {
   [GraphQLErrorCode.UNAUTHORIZED]: WizErrorType.UNAUTHORIZED,
   [GraphQLErrorCode.BAD_USER_INPUT]: WizErrorType.API_ERROR,
   [GraphQLErrorCode.INTERNAL]: WizErrorType.API_ERROR,
-  [GraphQLErrorCode.RATE_LIMIT_EXCEEDED]: WizErrorType.API_ERROR,
+  [GraphQLErrorCode.RATE_LIMIT_EXCEEDED]: WizErrorType.RATE_LIMITED,
   [GraphQLErrorCode.FORBIDDEN_IP]: WizErrorType.UNAUTHORIZED,
   [GraphQLErrorCode.NOT_FOUND]: WizErrorType.API_ERROR,
 };

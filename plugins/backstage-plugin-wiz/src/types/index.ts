@@ -4,6 +4,7 @@ export enum WizErrorType {
   FORBIDDEN = 'FORBIDDEN',
   API_ERROR = 'API_ERROR',
   INVALID_REQUEST = 'INVALID_REQUEST',
+  RATE_LIMITED = 'RATE_LIMITED',
 }
 
 export interface WizErrorResponse {

@@ -1,6 +1,7 @@
 import { ResponseErrorPanel } from '@backstage/core-components';
 import { WizError } from '../../api';
 import { WizErrorType } from '../../types';
+import { WizRateLimitState } from './WizRateLimitState';
 
 interface WizErrorStateProps {
   error: Error | WizError;
@@ -26,6 +27,8 @@ export const WizErrorState = ({ error }: WizErrorStateProps) => {
           title="Authentication Failed - Unable to authenticate with Wiz API"
         />
       );
+    case WizErrorType.RATE_LIMITED:
+      return <WizRateLimitState />;
     default:
       return <ResponseErrorPanel error={error} />;
   }

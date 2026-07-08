@@ -1,6 +1,7 @@
 import express from 'express';
 import Router from 'express-promise-router';
 import {
+  CacheService,
   LoggerService,
   RootConfigService,
 } from '@backstage/backend-plugin-api';
@@ -20,18 +21,19 @@ import { WizError } from '../types';
 export interface RouterOptions {
   logger: LoggerService;
   config: RootConfigService;
+  cache?: CacheService;
 }
 
 export async function createRouter(
   options: RouterOptions,
 ): Promise<express.Router> {
-  const { logger, config } = options;
+  const { logger, config, cache } = options;
   const router = Router();
 
   let wizClient: WizClient;
   let wizAuth: WizAuth;
   try {
-    wizClient = new WizClient(config);
+    wizClient = new WizClient(config, { cache, logger });
     wizAuth = new WizAuth(config);
 
     await wizAuth.fetchAccessToken();

@@ -1,4 +1,4 @@
-import { Entity } from '@backstage/catalog-model';
+import { Entity, stringifyEntityRef } from '@backstage/catalog-model';
 import { EmptyState, Progress } from '@backstage/core-components';
 import { useApi } from '@backstage/core-plugin-api';
 import {
@@ -15,6 +15,7 @@ import {
   WIZ_REPO_ANNOTATION,
 } from '../utils/constants';
 import { Overview } from './Overview';
+import { WizErrorState } from './shared/WizErrorState';
 
 async function getCloudResourceIds(
   externalIds: readonly string[],
@@ -82,19 +83,42 @@ export const areWizAnnotationsMissing = (entity: Entity) => {
   return !hasRequiredAnnotation;
 };
 
+const EMPTY_ENTITY_IDS: EntityIds = {
+  cloudResourceIds: [],
+  versionControlIds: [],
+  directAssetIds: [],
+  projectIds: [],
+};
+
 const MainPage = () => {
   const { entity } = useEntity();
   const api = useApi(wizApiRef);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error>();
-  const [entityIds, setEntityIds] = useState<EntityIds>({
-    cloudResourceIds: [],
-    versionControlIds: [],
-    directAssetIds: [],
-    projectIds: [],
-  });
+  const [entityIds, setEntityIds] = useState<EntityIds>(EMPTY_ENTITY_IDS);
+
+  // When the user switches to a different catalog entity, drop the previous
+  // entity's resolved state *during render* so the Overview subtree unmounts
+  // and re-resolves from a clean slate. Otherwise `loading` stays false and the
+  // old widgets linger with stale entityIds while `resetKey` (the entity ref)
+  // has already flipped — a late RATE_LIMITED response for the old entity would
+  // then flip the banner onto the new one. React's documented "adjust state on
+  // prop change" pattern, as used in WizRateLimitContext. See WZ-113816.
+  const entityRef = entity ? stringifyEntityRef(entity) : undefined;
+  const [prevEntityRef, setPrevEntityRef] = useState(entityRef);
+  if (entityRef !== prevEntityRef) {
+    setPrevEntityRef(entityRef);
+    setLoading(true);
+    setError(undefined);
+    setEntityIds(EMPTY_ENTITY_IDS);
+  }
 
   useEffect(() => {
+    // Guard against a slow fetch for a prior entity resolving after the user
+    // switches entities: only the latest effect run may commit state. Mirrors
+    // the requestId/isStale guard the data widgets use. See WZ-113816.
+    let cancelled = false;
+
     async function fetchIds() {
       if (!entity) return;
 
@@ -131,16 +155,16 @@ const MainPage = () => {
           repoIds?.length ? getVersionControlIds(repoIds, api) : emptyResult,
         ]);
 
-        // Handle errors
+        if (cancelled) return;
+
+        // Re-throw the original error so its WizError type (e.g. RATE_LIMITED)
+        // is preserved for WizErrorState. Wrapping with `new Error(...)` would
+        // strip the type and force the generic error panel.
         if (cloudResourcesResult.error) {
-          throw new Error(
-            `Failed to fetch cloud resources: ${cloudResourcesResult.error.message}`,
-          );
+          throw cloudResourcesResult.error;
         }
         if (versionControlResult.error) {
-          throw new Error(
-            `Failed to fetch version control resources: ${versionControlResult.error.message}`,
-          );
+          throw versionControlResult.error;
         }
 
         // Set all IDs
@@ -151,13 +175,18 @@ const MainPage = () => {
           projectIds,
         });
       } catch (err) {
+        if (cancelled) return;
         setError(err instanceof Error ? err : new Error('Failed to fetch IDs'));
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     fetchIds();
+
+    return () => {
+      cancelled = true;
+    };
   }, [entity, api]);
 
   // Handle initial states
@@ -176,13 +205,7 @@ const MainPage = () => {
   }
 
   if (error) {
-    return (
-      <EmptyState
-        title="Error Loading Data"
-        description={error.message}
-        missing="info"
-      />
-    );
+    return <WizErrorState error={error} />;
   }
 
   try {
@@ -202,7 +225,9 @@ const MainPage = () => {
       );
     }
 
-    return <Overview entityIds={entityIds} />;
+    return (
+      <Overview entityIds={entityIds} resetKey={stringifyEntityRef(entity)} />
+    );
   } catch {
     return (
       <EmptyState

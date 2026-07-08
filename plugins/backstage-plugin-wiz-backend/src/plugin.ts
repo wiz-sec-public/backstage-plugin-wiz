@@ -17,12 +17,14 @@ export const backstagePluginWizPlugin = createBackendPlugin({
         httpRouter: coreServices.httpRouter,
         logger: coreServices.logger,
         config: coreServices.rootConfig,
+        cache: coreServices.cache,
       },
-      async init({ httpRouter, logger, config }) {
+      async init({ httpRouter, logger, config, cache }) {
         httpRouter.use(
           await createRouter({
             logger,
             config,
+            cache,
           }),
         );
         httpRouter.addAuthPolicy({

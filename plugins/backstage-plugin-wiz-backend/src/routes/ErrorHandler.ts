@@ -57,6 +57,7 @@ export function handleWizError(error: WizError): {
       error: 'Invalid Request',
     },
     [WizErrorType.API_ERROR]: { statusCode: 500, error: 'Wiz API Error' },
+    [WizErrorType.RATE_LIMITED]: { statusCode: 429, error: 'Rate Limited' },
   };
 
   const errorInfo = errorMap[error.type] || {

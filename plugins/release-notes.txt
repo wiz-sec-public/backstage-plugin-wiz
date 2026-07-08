@@ -1,1 +1,25 @@
+## Rate-limit hardening (WZ-113816)
 
+### Bug Fix
+
+Large Backstage catalogs could exhaust the Wiz tenant rate limit, causing most
+entities to silently render "No Resources Found" instead of their Wiz data.
+The plugin made 4+ uncached Wiz GraphQL calls per entity page render with no
+concurrency control and no handling for HTTP 429 responses.
+
+### Backend
+
+- Response caching via the Backstage cache service (in-memory by default;
+  configure `backend.cache` for a shared store such as Redis).
+- Per-backend concurrency cap on Wiz GraphQL requests.
+- Automatic retry on HTTP 429 / `RATE_LIMIT_EXCEEDED`, honoring `Retry-After`
+  with exponential-backoff-and-jitter fallback.
+- New `RATE_LIMITED` error type, returned with HTTP 429.
+- New optional config: `wiz.cacheTtlSeconds` (default 300),
+  `wiz.maxConcurrentRequests` (default 5), `wiz.maxRetries` (default 3).
+
+### Frontend
+
+- Rate-limit responses now render a single, distinct "Wiz API rate limit
+  reached" state on the entity tab instead of a silent empty state or
+  duplicate error panels per widget.

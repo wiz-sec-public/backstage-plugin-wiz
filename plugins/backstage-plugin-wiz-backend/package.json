@@ -1,6 +1,6 @@
 {
   "name": "@wiz-sec/backstage-plugin-wiz-backend",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "main": "dist/index.cjs.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -34,6 +34,7 @@
     "@backstage/types": "^1.2.2",
     "express": "4.21.2",
     "express-promise-router": "^4.1.1",
+    "p-limit": "^3.1.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
