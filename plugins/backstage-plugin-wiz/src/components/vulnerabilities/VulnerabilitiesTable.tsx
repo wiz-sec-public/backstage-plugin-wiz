@@ -54,6 +54,7 @@ interface VulnerabilitiesState {
   totalFetched: number;
   totalCount: number;
   searchText: string;
+  sort: ColumnSort;
 }
 
 interface VulnerabilitiesTableProps {
@@ -75,13 +76,10 @@ export const VulnerabilitiesTable = ({
     totalFetched: 0,
     totalCount: 0,
     searchText: '',
+    sort: { field: 'RELATED_ISSUE_SEVERITY', direction: 'desc' },
   });
 
   const [filters, setFilters] = useState<Filters>({});
-  const [sort, setSort] = useState<ColumnSort>({
-    field: 'RELATED_ISSUE_SEVERITY',
-    direction: 'desc',
-  });
   const [error] = useState<Error>();
   const report = useRateLimitReporter('vulnerabilities');
 
@@ -100,7 +98,7 @@ export const VulnerabilitiesTable = ({
         const result = await api.fetchVulnerabilities(
           filters,
           cursor,
-          toApiOrder(sort),
+          toApiOrder(state.sort),
         );
         if (isStale()) return;
         setState(prev => ({
@@ -137,7 +135,7 @@ export const VulnerabilitiesTable = ({
         if (!isStale()) setState(prev => ({ ...prev, loading: false }));
       }
     },
-    [filters, api, report, sort],
+    [filters, api, report, state.sort],
   );
 
   useEffect(() => {
@@ -172,7 +170,10 @@ export const VulnerabilitiesTable = ({
   };
 
   const handleSort = (field: string, defaultDirection: SortDirection) => {
-    setSort(current => nextColumnSort(current, field, defaultDirection));
+    setState(prev => ({
+      ...prev,
+      sort: nextColumnSort(prev.sort, field, defaultDirection),
+    }));
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,14 +239,14 @@ export const VulnerabilitiesTable = ({
                   <SortableHeaderCell
                     label="Severity"
                     field="SEVERITY"
-                    sort={sort}
+                    sort={state.sort}
                     defaultDirection="desc"
                     onSort={handleSort}
                   />
                   <SortableHeaderCell
                     label="Related Issues"
                     field="RELATED_ISSUE_SEVERITY"
-                    sort={sort}
+                    sort={state.sort}
                     defaultDirection="desc"
                     onSort={handleSort}
                   />
@@ -253,14 +254,14 @@ export const VulnerabilitiesTable = ({
                   <SortableHeaderCell
                     label="First Detected"
                     field="FIRST_DETECTED_AT"
-                    sort={sort}
+                    sort={state.sort}
                     defaultDirection="desc"
                     onSort={handleSort}
                   />
                   <SortableHeaderCell
                     label="Last Detected"
                     field="LAST_DETECTED_AT"
-                    sort={sort}
+                    sort={state.sort}
                     defaultDirection="desc"
                     onSort={handleSort}
                   />

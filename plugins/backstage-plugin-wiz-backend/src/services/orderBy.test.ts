@@ -33,32 +33,34 @@ describe('parseOrderBy', () => {
   });
 
   it('rejects a field Wiz cannot order by', () => {
-    expect(() =>
+    let error: unknown;
+    try {
       parseOrderBy(
         { orderByField: 'RESOURCE_NAME', orderByDirection: 'ASC' },
         ISSUE_ORDER_FIELDS,
         DEFAULT_ISSUE_ORDER,
-      ),
-    ).toThrow(WizError);
-    try {
-      parseOrderBy(
-        { orderByField: 'RESOURCE_NAME' },
-        ISSUE_ORDER_FIELDS,
-        DEFAULT_ISSUE_ORDER,
       );
-    } catch (error) {
-      expect(error).toBeInstanceOf(WizError);
-      expect((error as WizError).type).toBe(WizErrorType.INVALID_REQUEST);
+    } catch (caught) {
+      error = caught;
     }
+
+    expect(error).toBeInstanceOf(WizError);
+    expect((error as WizError).type).toBe(WizErrorType.INVALID_REQUEST);
   });
 
   it('rejects an unknown direction', () => {
-    expect(() =>
+    let error: unknown;
+    try {
       parseOrderBy(
         { orderByField: 'SEVERITY', orderByDirection: 'SIDEWAYS' },
         ISSUE_ORDER_FIELDS,
         DEFAULT_ISSUE_ORDER,
-      ),
-    ).toThrow(WizError);
+      );
+    } catch (caught) {
+      error = caught;
+    }
+
+    expect(error).toBeInstanceOf(WizError);
+    expect((error as WizError).type).toBe(WizErrorType.INVALID_REQUEST);
   });
 });

@@ -53,6 +53,7 @@ interface IssuesState {
   totalFetched: number;
   totalCount: number;
   searchText: string;
+  sort: ColumnSort;
 }
 
 interface IssuesProps {
@@ -72,13 +73,10 @@ export const Issues = ({ entityIds }: IssuesProps) => {
     totalFetched: 0,
     totalCount: 0,
     searchText: '',
+    sort: { field: 'SEVERITY', direction: 'desc' },
   });
 
   const [filters, setFilters] = useState<Filters>({});
-  const [sort, setSort] = useState<ColumnSort>({
-    field: 'SEVERITY',
-    direction: 'desc',
-  });
   const [error] = useState<Error>();
   const report = useRateLimitReporter('issues');
 
@@ -94,7 +92,11 @@ export const Issues = ({ entityIds }: IssuesProps) => {
       const isStale = () => id !== requestId.current;
       setState(prev => ({ ...prev, loading: true }));
       try {
-        const result = await api.fetchIssues(filters, cursor, toApiOrder(sort));
+        const result = await api.fetchIssues(
+          filters,
+          cursor,
+          toApiOrder(state.sort),
+        );
         if (isStale()) return;
         setState(prev => ({
           ...prev,
@@ -122,7 +124,7 @@ export const Issues = ({ entityIds }: IssuesProps) => {
         if (!isStale()) setState(prev => ({ ...prev, loading: false }));
       }
     },
-    [filters, api, report, sort],
+    [filters, api, report, state.sort],
   );
 
   useEffect(() => {
@@ -157,7 +159,10 @@ export const Issues = ({ entityIds }: IssuesProps) => {
   };
 
   const handleSort = (field: string, defaultDirection: SortDirection) => {
-    setSort(current => nextColumnSort(current, field, defaultDirection));
+    setState(prev => ({
+      ...prev,
+      sort: nextColumnSort(prev.sort, field, defaultDirection),
+    }));
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -223,21 +228,21 @@ export const Issues = ({ entityIds }: IssuesProps) => {
                   <SortableHeaderCell
                     label="Severity"
                     field="SEVERITY"
-                    sort={sort}
+                    sort={state.sort}
                     defaultDirection="desc"
                     onSort={handleSort}
                   />
                   <SortableHeaderCell
                     label="Status"
                     field="STATUS"
-                    sort={sort}
+                    sort={state.sort}
                     defaultDirection="asc"
                     onSort={handleSort}
                   />
                   <SortableHeaderCell
                     label="Created At"
                     field="CREATED_AT"
-                    sort={sort}
+                    sort={state.sort}
                     defaultDirection="desc"
                     onSort={handleSort}
                   />

@@ -1,13 +1,10 @@
+import { WizOrderBy } from '../../api/WizAPI';
+
 export type SortDirection = 'asc' | 'desc';
 
 export interface ColumnSort {
   field: string;
   direction: SortDirection;
-}
-
-export interface ApiOrderBy {
-  field: string;
-  direction: 'ASC' | 'DESC';
 }
 
 // Clicking the active column flips direction. Clicking another column
@@ -26,7 +23,7 @@ export function nextColumnSort(
   return { field, direction: defaultDirection };
 }
 
-export function toApiOrder(sort: ColumnSort): ApiOrderBy {
+export function toApiOrder(sort: ColumnSort): WizOrderBy {
   return {
     field: sort.field,
     direction: sort.direction === 'asc' ? 'ASC' : 'DESC',

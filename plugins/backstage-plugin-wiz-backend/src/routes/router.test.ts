@@ -118,9 +118,18 @@ describe('createRouter', () => {
     });
 
     it('forwards a column sort to the Wiz client', async () => {
+      const mockResponse: IssuesResponse = {
+        data: {
+          issues: {
+            totalCount: 0,
+            nodes: [],
+            pageInfo: { hasNextPage: false, endCursor: '' },
+          },
+        },
+      };
       const getIssues = jest
         .spyOn(WizClient.prototype, 'getIssues')
-        .mockResolvedValueOnce({ data: { issues: { nodes: [] } } } as never);
+        .mockResolvedValueOnce(mockResponse);
 
       const response = await request(app).get('/wiz-issues').query({
         project: 'test-project',
@@ -207,11 +216,18 @@ describe('createRouter', () => {
     });
 
     it('forwards a column sort to the Wiz client', async () => {
+      const mockResponse: VulnerabilityFindingsResponse = {
+        data: {
+          vulnerabilityFindings: {
+            totalCount: 0,
+            nodes: [],
+            pageInfo: { hasNextPage: false, endCursor: '' },
+          },
+        },
+      };
       const getVulnerabilityFindings = jest
         .spyOn(WizClient.prototype, 'getVulnerabilityFindings')
-        .mockResolvedValueOnce({
-          data: { vulnerabilityFindings: { nodes: [] } },
-        } as never);
+        .mockResolvedValueOnce(mockResponse);
 
       const response = await request(app).get('/wiz-vulnerabilities').query({
         projectId: 'test-project',
