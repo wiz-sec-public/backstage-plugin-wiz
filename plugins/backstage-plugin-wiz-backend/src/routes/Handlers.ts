@@ -1,5 +1,12 @@
 import express from 'express';
 import { z } from 'zod';
+import {
+  DEFAULT_ISSUE_ORDER,
+  DEFAULT_VULNERABILITY_ORDER,
+  ISSUE_ORDER_FIELDS,
+  parseOrderBy,
+  VULNERABILITY_ORDER_FIELDS,
+} from '../services/orderBy';
 import { WizClient } from '../services/WizClient';
 import { WizError, WizErrorType } from '../types';
 
@@ -39,9 +46,15 @@ export async function handleGetIssues(
       filters.search = queryParams.search;
     }
 
+    const orderBy = parseOrderBy(
+      queryParams,
+      ISSUE_ORDER_FIELDS,
+      DEFAULT_ISSUE_ORDER,
+    );
     const result = await wizClient.getIssues(
       filters,
       queryParams.after || null,
+      orderBy,
     );
     res.status(200).json(result);
   } catch (error) {
@@ -77,9 +90,15 @@ export async function handleGetVulnerabilities(
       filters.vulnerabilityExternalId = queryParams.vulnerabilityExternalId;
     }
 
+    const orderBy = parseOrderBy(
+      queryParams,
+      VULNERABILITY_ORDER_FIELDS,
+      DEFAULT_VULNERABILITY_ORDER,
+    );
     const result = await wizClient.getVulnerabilityFindings(
       filters,
       queryParams.after || null,
+      orderBy,
     );
     res.status(200).json(result);
   } catch (error) {

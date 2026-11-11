@@ -25,8 +25,15 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { wizApiRef, WizError } from '../../api';
 import { EntityIds, IssueNode, WizErrorType } from '../../types';
+import {
+  ColumnSort,
+  nextColumnSort,
+  SortDirection,
+  toApiOrder,
+} from '../shared/columnSort';
 import { FormattedDateTime } from '../shared/FormattedDateTime';
 import { SeverityChip } from '../shared/SeverityChip';
+import { SortableHeaderCell } from '../shared/SortableHeaderCell';
 import { StatusChip } from '../shared/StatusChip';
 import { WizErrorState } from '../shared/WizErrorState';
 import {
@@ -46,6 +53,7 @@ interface IssuesState {
   totalFetched: number;
   totalCount: number;
   searchText: string;
+  sort: ColumnSort;
 }
 
 interface IssuesProps {
@@ -65,6 +73,7 @@ export const Issues = ({ entityIds }: IssuesProps) => {
     totalFetched: 0,
     totalCount: 0,
     searchText: '',
+    sort: { field: 'SEVERITY', direction: 'desc' },
   });
 
   const [filters, setFilters] = useState<Filters>({});
@@ -83,7 +92,11 @@ export const Issues = ({ entityIds }: IssuesProps) => {
       const isStale = () => id !== requestId.current;
       setState(prev => ({ ...prev, loading: true }));
       try {
-        const result = await api.fetchIssues(filters, cursor);
+        const result = await api.fetchIssues(
+          filters,
+          cursor,
+          toApiOrder(state.sort),
+        );
         if (isStale()) return;
         setState(prev => ({
           ...prev,
@@ -111,7 +124,7 @@ export const Issues = ({ entityIds }: IssuesProps) => {
         if (!isStale()) setState(prev => ({ ...prev, loading: false }));
       }
     },
-    [filters, api, report],
+    [filters, api, report, state.sort],
   );
 
   useEffect(() => {
@@ -142,6 +155,13 @@ export const Issues = ({ entityIds }: IssuesProps) => {
       ...prev,
       pageSize: parseInt(event.target.value, 10),
       currentPage: 0,
+    }));
+  };
+
+  const handleSort = (field: string, defaultDirection: SortDirection) => {
+    setState(prev => ({
+      ...prev,
+      sort: nextColumnSort(prev.sort, field, defaultDirection),
     }));
   };
 
@@ -205,9 +225,27 @@ export const Issues = ({ entityIds }: IssuesProps) => {
                 <TableRow>
                   <TableCell sx={{ fontWeight: 600 }}>Issue</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Resource</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Severity</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Created At</TableCell>
+                  <SortableHeaderCell
+                    label="Severity"
+                    field="SEVERITY"
+                    sort={state.sort}
+                    defaultDirection="desc"
+                    onSort={handleSort}
+                  />
+                  <SortableHeaderCell
+                    label="Status"
+                    field="STATUS"
+                    sort={state.sort}
+                    defaultDirection="asc"
+                    onSort={handleSort}
+                  />
+                  <SortableHeaderCell
+                    label="Created At"
+                    field="CREATED_AT"
+                    sort={state.sort}
+                    defaultDirection="desc"
+                    onSort={handleSort}
+                  />
                   <TableCell sx={{ fontWeight: 600 }} align="center">
                     Actions
                   </TableCell>

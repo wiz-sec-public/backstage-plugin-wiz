@@ -103,6 +103,27 @@ describe('WizClient', () => {
       expect(url).toContain('after=cursor123');
     });
 
+    it('sends the selected column order', async () => {
+      mockFetchApi.fetch.mockResolvedValueOnce(
+        createMockResponse({
+          issues: {
+            nodes: [],
+            pageInfo: { hasNextPage: false, endCursor: '' },
+            totalCount: 0,
+          },
+        }),
+      );
+
+      await client.fetchIssues({ projectId: ['test'] }, undefined, {
+        field: 'CREATED_AT',
+        direction: 'ASC',
+      });
+
+      const url = mockFetchApi.fetch.mock.calls[0][0] as string;
+      expect(url).toContain('orderByField=CREATED_AT');
+      expect(url).toContain('orderByDirection=ASC');
+    });
+
     it('handles network error', async () => {
       mockFetchApi.fetch.mockRejectedValueOnce(
         new TypeError('Failed to fetch'),
