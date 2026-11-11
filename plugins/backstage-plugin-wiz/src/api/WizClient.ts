@@ -1,4 +1,4 @@
-import { WizAPI } from './WizAPI';
+import { WizAPI, WizOrderBy } from './WizAPI';
 import { DiscoveryApi, FetchApi } from '@backstage/core-plugin-api';
 import {
   WizErrorType,
@@ -87,13 +87,12 @@ export class WizClient implements WizAPI {
   private buildQueryParams(
     filters: Record<string, unknown>,
     after?: string,
+    orderBy?: WizOrderBy,
   ): URLSearchParams {
     const query = new URLSearchParams();
 
     if (!filters) {
-      if (after) {
-        query.append('after', after);
-      }
+      this.appendCursorAndOrder(query, after, orderBy);
       return query;
     }
 
@@ -118,11 +117,23 @@ export class WizClient implements WizAPI {
       }
     });
 
+    this.appendCursorAndOrder(query, after, orderBy);
+
+    return query;
+  }
+
+  private appendCursorAndOrder(
+    query: URLSearchParams,
+    after?: string,
+    orderBy?: WizOrderBy,
+  ) {
     if (after) {
       query.append('after', after);
     }
-
-    return query;
+    if (orderBy) {
+      query.append('orderByField', orderBy.field);
+      query.append('orderByDirection', orderBy.direction);
+    }
   }
 
   private cleanUndefinedValues(
@@ -160,12 +171,13 @@ export class WizClient implements WizAPI {
   async fetchIssues(
     filters: Record<string, unknown> = {},
     after?: string,
+    orderBy?: WizOrderBy,
   ): Promise<IssuesResponse> {
     try {
       const baseUrl = await this.#discoveryApi.getBaseUrl(
         'backstage-plugin-wiz',
       );
-      const queryParams = this.buildQueryParams(filters, after);
+      const queryParams = this.buildQueryParams(filters, after, orderBy);
 
       const response = await this.#fetchApi.fetch(
         `${baseUrl}/wiz-issues?${queryParams.toString()}`,
@@ -187,12 +199,13 @@ export class WizClient implements WizAPI {
   async fetchVulnerabilities(
     filters: Record<string, unknown> = {},
     after?: string,
+    orderBy?: WizOrderBy,
   ): Promise<VulnerabilitiesResponse> {
     try {
       const baseUrl = await this.#discoveryApi.getBaseUrl(
         'backstage-plugin-wiz',
       );
-      const queryParams = this.buildQueryParams(filters, after);
+      const queryParams = this.buildQueryParams(filters, after, orderBy);
       const response = await this.#fetchApi.fetch(
         `${baseUrl}/wiz-vulnerabilities?${queryParams.toString()}`,
       );

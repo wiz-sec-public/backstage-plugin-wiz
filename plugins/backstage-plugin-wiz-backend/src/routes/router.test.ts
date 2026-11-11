@@ -116,6 +116,39 @@ describe('createRouter', () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockResponse);
     });
+
+    it('forwards a column sort to the Wiz client', async () => {
+      const getIssues = jest
+        .spyOn(WizClient.prototype, 'getIssues')
+        .mockResolvedValueOnce({ data: { issues: { nodes: [] } } } as never);
+
+      const response = await request(app).get('/wiz-issues').query({
+        project: 'test-project',
+        orderByField: 'CREATED_AT',
+        orderByDirection: 'ASC',
+      });
+
+      expect(response.status).toBe(200);
+      expect(getIssues).toHaveBeenCalledWith(
+        { project: 'test-project' },
+        null,
+        {
+          field: 'CREATED_AT',
+          direction: 'ASC',
+        },
+      );
+    });
+
+    it('rejects an order field the issues query cannot sort by', async () => {
+      const getIssues = jest.spyOn(WizClient.prototype, 'getIssues');
+
+      const response = await request(app)
+        .get('/wiz-issues')
+        .query({ orderByField: 'RESOURCE_NAME', orderByDirection: 'ASC' });
+
+      expect(response.status).toBe(400);
+      expect(getIssues).not.toHaveBeenCalled();
+    });
   });
 
   describe('/wiz-vulnerabilities', () => {
@@ -171,6 +204,27 @@ describe('createRouter', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockResponse);
+    });
+
+    it('forwards a column sort to the Wiz client', async () => {
+      const getVulnerabilityFindings = jest
+        .spyOn(WizClient.prototype, 'getVulnerabilityFindings')
+        .mockResolvedValueOnce({
+          data: { vulnerabilityFindings: { nodes: [] } },
+        } as never);
+
+      const response = await request(app).get('/wiz-vulnerabilities').query({
+        projectId: 'test-project',
+        orderByField: 'FIRST_DETECTED_AT',
+        orderByDirection: 'DESC',
+      });
+
+      expect(response.status).toBe(200);
+      expect(getVulnerabilityFindings).toHaveBeenCalledWith(
+        { projectId: 'test-project' },
+        null,
+        { field: 'FIRST_DETECTED_AT', direction: 'DESC' },
+      );
     });
   });
 

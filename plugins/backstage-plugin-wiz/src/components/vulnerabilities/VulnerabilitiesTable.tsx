@@ -26,9 +26,16 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { wizApiRef, WizError } from '../../api';
 import { EntityIds, VulnerabilityNode, WizErrorType } from '../../types';
+import {
+  ColumnSort,
+  nextColumnSort,
+  SortDirection,
+  toApiOrder,
+} from '../shared/columnSort';
 import { FormattedDateTime } from '../shared/FormattedDateTime';
 import { SeverityChip } from '../shared/SeverityChip';
 import { SeverityIndicator } from '../shared/SeverityIndicator';
+import { SortableHeaderCell } from '../shared/SortableHeaderCell';
 import { WizErrorState } from '../shared/WizErrorState';
 import {
   isRateLimitError,
@@ -71,6 +78,10 @@ export const VulnerabilitiesTable = ({
   });
 
   const [filters, setFilters] = useState<Filters>({});
+  const [sort, setSort] = useState<ColumnSort>({
+    field: 'RELATED_ISSUE_SEVERITY',
+    direction: 'desc',
+  });
   const [error] = useState<Error>();
   const report = useRateLimitReporter('vulnerabilities');
 
@@ -86,7 +97,11 @@ export const VulnerabilitiesTable = ({
       const isStale = () => id !== requestId.current;
       setState(prev => ({ ...prev, loading: true }));
       try {
-        const result = await api.fetchVulnerabilities(filters, cursor);
+        const result = await api.fetchVulnerabilities(
+          filters,
+          cursor,
+          toApiOrder(sort),
+        );
         if (isStale()) return;
         setState(prev => ({
           ...prev,
@@ -122,7 +137,7 @@ export const VulnerabilitiesTable = ({
         if (!isStale()) setState(prev => ({ ...prev, loading: false }));
       }
     },
-    [filters, api, report],
+    [filters, api, report, sort],
   );
 
   useEffect(() => {
@@ -154,6 +169,10 @@ export const VulnerabilitiesTable = ({
       pageSize: parseInt(event.target.value, 10),
       currentPage: 0,
     }));
+  };
+
+  const handleSort = (field: string, defaultDirection: SortDirection) => {
+    setSort(current => nextColumnSort(current, field, defaultDirection));
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,11 +235,35 @@ export const VulnerabilitiesTable = ({
                 <TableRow>
                   <TableCell sx={{ fontWeight: 600 }}>Finding</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Resource</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Severity</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Related Issues</TableCell>
+                  <SortableHeaderCell
+                    label="Severity"
+                    field="SEVERITY"
+                    sort={sort}
+                    defaultDirection="desc"
+                    onSort={handleSort}
+                  />
+                  <SortableHeaderCell
+                    label="Related Issues"
+                    field="RELATED_ISSUE_SEVERITY"
+                    sort={sort}
+                    defaultDirection="desc"
+                    onSort={handleSort}
+                  />
                   <TableCell sx={{ fontWeight: 600 }}>Exploits</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>First Detected</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Last Detected</TableCell>
+                  <SortableHeaderCell
+                    label="First Detected"
+                    field="FIRST_DETECTED_AT"
+                    sort={sort}
+                    defaultDirection="desc"
+                    onSort={handleSort}
+                  />
+                  <SortableHeaderCell
+                    label="Last Detected"
+                    field="LAST_DETECTED_AT"
+                    sort={sort}
+                    defaultDirection="desc"
+                    onSort={handleSort}
+                  />
                   <TableCell sx={{ fontWeight: 600 }} align="center">
                     Actions
                   </TableCell>

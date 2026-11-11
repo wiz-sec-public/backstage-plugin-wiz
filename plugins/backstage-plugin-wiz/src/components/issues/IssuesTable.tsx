@@ -25,8 +25,15 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { wizApiRef, WizError } from '../../api';
 import { EntityIds, IssueNode, WizErrorType } from '../../types';
+import {
+  ColumnSort,
+  nextColumnSort,
+  SortDirection,
+  toApiOrder,
+} from '../shared/columnSort';
 import { FormattedDateTime } from '../shared/FormattedDateTime';
 import { SeverityChip } from '../shared/SeverityChip';
+import { SortableHeaderCell } from '../shared/SortableHeaderCell';
 import { StatusChip } from '../shared/StatusChip';
 import { WizErrorState } from '../shared/WizErrorState';
 import {
@@ -68,6 +75,10 @@ export const Issues = ({ entityIds }: IssuesProps) => {
   });
 
   const [filters, setFilters] = useState<Filters>({});
+  const [sort, setSort] = useState<ColumnSort>({
+    field: 'SEVERITY',
+    direction: 'desc',
+  });
   const [error] = useState<Error>();
   const report = useRateLimitReporter('issues');
 
@@ -83,7 +94,7 @@ export const Issues = ({ entityIds }: IssuesProps) => {
       const isStale = () => id !== requestId.current;
       setState(prev => ({ ...prev, loading: true }));
       try {
-        const result = await api.fetchIssues(filters, cursor);
+        const result = await api.fetchIssues(filters, cursor, toApiOrder(sort));
         if (isStale()) return;
         setState(prev => ({
           ...prev,
@@ -111,7 +122,7 @@ export const Issues = ({ entityIds }: IssuesProps) => {
         if (!isStale()) setState(prev => ({ ...prev, loading: false }));
       }
     },
-    [filters, api, report],
+    [filters, api, report, sort],
   );
 
   useEffect(() => {
@@ -143,6 +154,10 @@ export const Issues = ({ entityIds }: IssuesProps) => {
       pageSize: parseInt(event.target.value, 10),
       currentPage: 0,
     }));
+  };
+
+  const handleSort = (field: string, defaultDirection: SortDirection) => {
+    setSort(current => nextColumnSort(current, field, defaultDirection));
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,9 +220,27 @@ export const Issues = ({ entityIds }: IssuesProps) => {
                 <TableRow>
                   <TableCell sx={{ fontWeight: 600 }}>Issue</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Resource</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Severity</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Created At</TableCell>
+                  <SortableHeaderCell
+                    label="Severity"
+                    field="SEVERITY"
+                    sort={sort}
+                    defaultDirection="desc"
+                    onSort={handleSort}
+                  />
+                  <SortableHeaderCell
+                    label="Status"
+                    field="STATUS"
+                    sort={sort}
+                    defaultDirection="asc"
+                    onSort={handleSort}
+                  />
+                  <SortableHeaderCell
+                    label="Created At"
+                    field="CREATED_AT"
+                    sort={sort}
+                    defaultDirection="desc"
+                    onSort={handleSort}
+                  />
                   <TableCell sx={{ fontWeight: 600 }} align="center">
                     Actions
                   </TableCell>

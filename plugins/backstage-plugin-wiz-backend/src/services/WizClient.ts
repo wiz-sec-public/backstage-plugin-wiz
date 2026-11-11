@@ -22,6 +22,11 @@ import {
   WizError,
   WizErrorType,
 } from '../types';
+import {
+  DEFAULT_ISSUE_ORDER,
+  DEFAULT_VULNERABILITY_ORDER,
+  type WizOrderBy,
+} from './orderBy';
 import { WizAuth } from './WizAuth';
 import type { Config } from '@backstage/config';
 import type {
@@ -324,6 +329,7 @@ export class WizClient {
   async getIssues(
     filters: Record<string, unknown> = {},
     after: string | null = null,
+    orderBy: WizOrderBy = DEFAULT_ISSUE_ORDER,
   ): Promise<IssuesResponse> {
     const variables = {
       first: 20,
@@ -332,7 +338,7 @@ export class WizClient {
         status: ['OPEN', 'IN_PROGRESS'],
         ...filters,
       },
-      orderBy: { direction: 'DESC', field: 'SEVERITY' },
+      orderBy,
     };
 
     return this.executeWithPolicies<IssuesResponse>(ISSUES_QUERY, variables);
@@ -341,6 +347,7 @@ export class WizClient {
   async getVulnerabilityFindings(
     filters: Record<string, unknown> = {},
     after: string | null = null,
+    orderBy: WizOrderBy = DEFAULT_VULNERABILITY_ORDER,
   ): Promise<VulnerabilityFindingsResponse> {
     const variables = {
       first: 20,
@@ -349,7 +356,7 @@ export class WizClient {
         status: ['OPEN'],
         ...filters,
       },
-      orderBy: { direction: 'DESC', field: 'RELATED_ISSUE_SEVERITY' },
+      orderBy,
     };
 
     return this.executeWithPolicies<VulnerabilityFindingsResponse>(
